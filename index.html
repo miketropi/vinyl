@@ -1,0 +1,4079 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>Analogic — 3D Vinyl Experience</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ============================================================
+   DESIGN SYSTEM — extracted from reference
+   ============================================================ */
+      :root {
+        /* color */
+        --bg-0: #f6eddb; /* warm cream, top */
+        --bg-1: #efe2c8; /* warm cream, bottom */
+        --ink: #2a241c; /* near-black warm ink */
+        --ink-soft: #5b5142; /* secondary text */
+        --ink-faint: #94886f; /* tertiary / muted labels */
+        --accent: #a8763e; /* amber / brass */
+        --accent-strong: #8f5f2c;
+        --accent-soft: #c99e63;
+        --card: #fbf5e9; /* card face */
+        --card-border: #e3d5b8;
+        --hairline: #ddcdae;
+        --pill-bg: #f4ead6;
+        --pill-active: #c69a5c;
+        --pill-active-ink: #fff8ec;
+        --player-bg: #fbf4e6;
+        --shadow-warm: rgba(84, 60, 28, 0.16);
+        --shadow-deep: rgba(52, 36, 14, 0.3);
+        --focus: #8f5f2c;
+
+        /* type */
+        --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+        --sans: "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+
+        /* spacing rhythm */
+        --pad-x: clamp(20px, 3.4vw, 52px);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        font-family: var(--sans);
+        color: var(--ink);
+        background: linear-gradient(
+          180deg,
+          var(--bg-0) 0%,
+          #f3e7cf 55%,
+          var(--bg-1) 100%
+        );
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+      button {
+        font-family: inherit;
+        color: inherit;
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+      button:focus-visible,
+      a:focus-visible,
+      [tabindex]:focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 3px;
+        border-radius: 4px;
+      }
+      ::selection {
+        background: #e2c893;
+        color: #2a241c;
+      }
+
+      /* ============================================================
+   NAVIGATION
+   ============================================================ */
+      .nav {
+        position: relative;
+        z-index: 30;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 22px var(--pad-x) 20px;
+        border-bottom: 1px solid var(--hairline);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        text-decoration: none;
+        color: var(--ink);
+      }
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 50% 50%,
+          #f0e6d2 0 16%,
+          #1d1913 17% 100%
+        );
+        position: relative;
+        flex: 0 0 auto;
+        box-shadow: 0 2px 6px rgba(60, 40, 15, 0.25);
+      }
+      .brand-mark::after {
+        content: "";
+        position: absolute;
+        inset: 31%;
+        border-radius: 50%;
+        background: radial-gradient(circle, #efe4cd 0 34%, #c99e63 35% 100%);
+      }
+      .brand-name {
+        font-family: var(--serif);
+        font-size: 27px;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        line-height: 1;
+      }
+      .brand-sub {
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: 0.24em;
+        color: var(--ink-faint);
+        margin-top: 4px;
+      }
+      .nav-links {
+        display: flex;
+        gap: clamp(20px, 3vw, 44px);
+        list-style: none;
+      }
+      .nav-links a {
+        position: relative;
+        text-decoration: none;
+        color: var(--ink-soft);
+        font-family: var(--serif);
+        font-size: 19px;
+        font-weight: 500;
+        padding: 4px 2px;
+        transition: color 0.25s ease;
+      }
+      .nav-links a:hover {
+        color: var(--ink);
+      }
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -9px;
+        transform: translateX(-50%) scaleX(0);
+        width: 100%;
+        height: 2px;
+        background: var(--ink);
+        border-radius: 2px;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-origin: center;
+      }
+      .nav-links a:hover::after {
+        transform: translateX(-50%) scaleX(0.55);
+      }
+      .nav-links a[aria-current] {
+        color: var(--ink);
+      }
+      .nav-links a[aria-current]::after {
+        transform: translateX(-50%) scaleX(0);
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--ink);
+        transform: translateX(-50%) scale(1);
+        bottom: -8px;
+      }
+      .nav-icons {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+      }
+      .icon-btn {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--ink);
+        transition: background 0.2s ease;
+      }
+      .icon-btn:hover {
+        background: rgba(120, 90, 45, 0.09);
+      }
+      .icon-btn svg {
+        width: 20px;
+        height: 20px;
+        stroke: currentColor;
+        stroke-width: 1.6;
+        fill: none;
+        stroke-linecap: round;
+      }
+
+      /* ============================================================
+   STAGE (hero + 3D)
+   ============================================================ */
+      .stage {
+        position: relative;
+        height: clamp(520px, 66vh, 760px);
+      }
+      #gl {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        touch-action: none;
+      }
+      #gl.grabbing {
+        cursor: grabbing;
+      }
+      #gl.knob {
+        cursor: ns-resize;
+      }
+      #gl.press {
+        cursor: pointer;
+      }
+
+      .hero-copy {
+        position: absolute;
+        left: var(--pad-x);
+        top: clamp(36px, 8vh, 86px);
+        z-index: 5;
+        pointer-events: none;
+      }
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.28em;
+        color: var(--accent);
+      }
+      .eyebrow::after {
+        content: "";
+        width: 44px;
+        height: 1px;
+        background: var(--accent-soft);
+      }
+      .hero-title {
+        font-family: var(--serif);
+        font-weight: 500;
+        font-size: clamp(34px, 3.6vw, 52px);
+        line-height: 1.14;
+        letter-spacing: 0.002em;
+        margin-top: 18px;
+        color: var(--ink);
+      }
+
+      /* speed selector */
+      .speed {
+        position: absolute;
+        left: var(--pad-x);
+        bottom: clamp(48px, 10vh, 96px);
+        z-index: 5;
+        background: var(--pill-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
+        padding: 14px 16px 16px;
+        box-shadow: 0 8px 22px rgba(90, 64, 26, 0.1);
+      }
+      .speed-label {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.22em;
+        color: var(--ink-faint);
+        margin-bottom: 11px;
+      }
+      .speed-opts {
+        display: flex;
+        background: #ece0c6;
+        border-radius: 999px;
+        padding: 3px;
+        gap: 3px;
+      }
+      .speed-btn {
+        min-width: 62px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--ink-soft);
+        transition:
+          background 0.25s ease,
+          color 0.25s ease,
+          box-shadow 0.25s ease;
+      }
+      .speed-btn[aria-pressed="true"] {
+        background: linear-gradient(180deg, #cda264, #b98a4a);
+        color: var(--pill-active-ink);
+        box-shadow:
+          0 3px 8px rgba(122, 84, 32, 0.35),
+          inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      }
+      .speed-btn:not([aria-pressed="true"]):hover {
+        color: var(--ink);
+      }
+
+      /* rotate button */
+      .rotate-wrap {
+        position: absolute;
+        right: var(--pad-x);
+        bottom: clamp(60px, 11vh, 110px);
+        z-index: 5;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .rotate-btn {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        border: 1px solid var(--card-border);
+        background: rgba(251, 245, 233, 0.72);
+        display: grid;
+        place-items: center;
+        backdrop-filter: blur(3px);
+        box-shadow: 0 10px 24px rgba(90, 64, 26, 0.12);
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease;
+      }
+      .rotate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 28px rgba(90, 64, 26, 0.18);
+      }
+      .rotate-btn svg {
+        width: 26px;
+        height: 26px;
+        stroke: var(--ink);
+        stroke-width: 1.6;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .rotate-btn:hover svg {
+        transform: rotate(-70deg);
+      }
+      .rotate-label {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.24em;
+        color: var(--ink-faint);
+      }
+
+      /* drag hint */
+      .drag-hint {
+        position: absolute;
+        left: 50%;
+        bottom: clamp(6px, 2vh, 18px);
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 5;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.26em;
+        color: var(--ink-faint);
+        transition: opacity 0.8s ease;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+      .drag-hint.hide {
+        opacity: 0;
+      }
+      .drag-hint .hand {
+        animation: nudge 2.6s ease-in-out infinite;
+        font-size: 16px;
+        letter-spacing: 0;
+      }
+      .drag-hint .arr {
+        color: #b3a789;
+        letter-spacing: 0;
+        font-size: 13px;
+      }
+      @keyframes nudge {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        50% {
+          transform: translateX(9px);
+        }
+      }
+
+      /* ============================================================
+   MUSIC PLAYER BAR
+   ============================================================ */
+      .player {
+        position: relative;
+        z-index: 20;
+        width: min(820px, calc(100% - 2 * var(--pad-x)));
+        margin: 10px auto 0;
+        background: var(--player-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 18px;
+        box-shadow: 0 14px 34px rgba(90, 64, 26, 0.12);
+        display: flex;
+        align-items: center;
+        gap: clamp(12px, 2vw, 22px);
+        padding: 12px clamp(14px, 2vw, 24px);
+      }
+      .now {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        min-width: 0;
+        flex: 0 1 240px;
+        padding-right: 8px;
+        border-right: 1px solid var(--hairline);
+      }
+      .now-art {
+        width: 46px;
+        height: 46px;
+        border-radius: 8px;
+        flex: 0 0 auto;
+        box-shadow: 0 3px 8px rgba(60, 40, 15, 0.28);
+        background: #222 center/cover;
+        overflow: hidden;
+      }
+      .now-art canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .now-meta {
+        min-width: 0;
+      }
+      .now-title {
+        font-family: var(--serif);
+        font-size: 17px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .now-artist {
+        font-size: 12px;
+        color: var(--ink-faint);
+        margin-top: 1px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .transport {
+        display: flex;
+        align-items: center;
+        gap: clamp(10px, 1.6vw, 20px);
+      }
+      .t-btn {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        transition: background 0.2s;
+      }
+      .t-btn:hover {
+        background: rgba(120, 90, 45, 0.09);
+      }
+      .t-btn svg {
+        width: 19px;
+        height: 19px;
+        fill: var(--ink);
+      }
+      .t-play {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 34% 28%, #4a3d2c, #241d13 70%);
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        box-shadow:
+          0 6px 16px rgba(40, 26, 8, 0.4),
+          inset 0 1px 0 rgba(255, 240, 210, 0.18);
+        transition:
+          transform 0.18s ease,
+          box-shadow 0.18s ease;
+      }
+      .t-play:hover {
+        transform: scale(1.05);
+      }
+      .t-play:active {
+        transform: scale(0.96);
+      }
+      .t-play svg {
+        width: 20px;
+        height: 20px;
+        fill: #f3e8d2;
+      }
+      .seek-wrap {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        min-width: 120px;
+      }
+      .time {
+        font-size: 11.5px;
+        font-variant-numeric: tabular-nums;
+        color: var(--ink-faint);
+        min-width: 36px;
+      }
+      .time.cur {
+        color: var(--ink-soft);
+      }
+      .seek {
+        position: relative;
+        flex: 1;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+      }
+      .seek-track {
+        width: 100%;
+        height: 3px;
+        border-radius: 3px;
+        background: #e0d2b3;
+        overflow: visible;
+        position: relative;
+      }
+      .seek-fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 0%;
+        border-radius: 3px;
+        background: var(--ink);
+      }
+      .seek-dot {
+        position: absolute;
+        top: 50%;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: var(--ink);
+        transform: translate(-50%, -50%);
+        left: 0%;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+      }
+      .vol-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 0 0 auto;
+      }
+      .vol-wrap svg {
+        width: 19px;
+        height: 19px;
+        stroke: var(--ink-soft);
+        fill: none;
+        stroke-width: 1.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .vol {
+        position: relative;
+        width: 86px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+      }
+      .vol-track {
+        width: 100%;
+        height: 2.5px;
+        border-radius: 3px;
+        background: #e0d2b3;
+        position: relative;
+      }
+      .vol-fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        border-radius: 3px;
+        background: var(--ink-soft);
+      }
+      .vol-dot {
+        position: absolute;
+        top: 50%;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--ink);
+        transform: translate(-50%, -50%);
+      }
+
+      /* ============================================================
+   ALBUM CAROUSEL
+   ============================================================ */
+      .collection {
+        position: relative;
+        z-index: 10;
+        padding: 34px var(--pad-x) 54px;
+      }
+      .collection-head {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        margin-bottom: 22px;
+      }
+      .collection-title {
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.28em;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      .collection-rule {
+        flex: 1;
+        height: 1px;
+        background: var(--hairline);
+      }
+      .view-all {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        white-space: nowrap;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.22em;
+        color: var(--ink-soft);
+        transition: color 0.2s;
+      }
+      .view-all:hover {
+        color: var(--ink);
+      }
+      .view-all svg {
+        width: 13px;
+        height: 13px;
+        stroke: currentColor;
+        stroke-width: 2;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .carousel-zone {
+        position: relative;
+      }
+      .carousel {
+        display: flex;
+        gap: clamp(52px, 5.2vw, 76px);
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        padding: 14px 48px 8px 6px;
+      }
+      .carousel::-webkit-scrollbar {
+        display: none;
+      }
+      .album {
+        flex: 0 0 auto;
+        width: clamp(168px, 15.5vw, 218px);
+        text-align: left;
+        position: relative;
+      }
+      .album-visual {
+        position: relative;
+        height: 0;
+        padding-bottom: 82%;
+        margin-bottom: 14px;
+      }
+      .album-disc {
+        position: absolute;
+        top: 6%;
+        left: 38%;
+        width: 78%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 50% 50%,
+          #efe2c6 0 4.5%,
+          var(--disc-accent, #b06c2f) 5% 17%,
+          #17130d 17.5% 60%,
+          #241d14 61% 74%,
+          #17130d 75% 100%
+        );
+        box-shadow: 0 8px 18px rgba(40, 26, 8, 0.35);
+        transition: transform 0.45s cubic-bezier(0.34, 1.3, 0.5, 1);
+      }
+      .album-disc::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: conic-gradient(
+          from 210deg,
+          rgba(255, 240, 210, 0.14) 0 8%,
+          transparent 12% 46%,
+          rgba(255, 240, 210, 0.08) 50% 56%,
+          transparent 60%
+        );
+      }
+      .album-cover {
+        position: absolute;
+        inset: 0 18% 0 0;
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--card);
+        border: 5px solid var(--card);
+        box-shadow: 0 10px 26px rgba(70, 48, 18, 0.22);
+        transition:
+          transform 0.45s cubic-bezier(0.34, 1.3, 0.5, 1),
+          box-shadow 0.45s ease;
+      }
+      .album-cover canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .album:hover .album-cover,
+      .album:focus-visible .album-cover {
+        transform: translateY(-9px);
+        box-shadow: 0 20px 36px rgba(70, 48, 18, 0.3);
+      }
+      .album:hover .album-disc,
+      .album:focus-visible .album-disc {
+        transform: translateX(11%) rotate(28deg);
+      }
+      .album.active .album-cover {
+        outline: 2px solid var(--accent-soft);
+        outline-offset: 3px;
+      }
+      .album-name {
+        font-family: var(--serif);
+        font-size: 19px;
+        font-weight: 600;
+        line-height: 1.2;
+      }
+      .album-artist {
+        font-size: 12.5px;
+        color: var(--ink-faint);
+        margin-top: 3px;
+      }
+      .car-arrow {
+        position: absolute;
+        top: 37%;
+        z-index: 6;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(251, 245, 233, 0.9);
+        border: 1px solid var(--card-border);
+        display: grid;
+        place-items: center;
+        box-shadow: 0 8px 20px rgba(90, 64, 26, 0.16);
+        transition:
+          transform 0.2s ease,
+          opacity 0.3s ease;
+      }
+      .car-arrow:hover {
+        transform: scale(1.08);
+      }
+      .car-arrow svg {
+        width: 17px;
+        height: 17px;
+        stroke: var(--ink);
+        stroke-width: 2;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .car-arrow.prev {
+        left: calc(var(--pad-x) * -0.55);
+      }
+      .car-arrow.next {
+        right: calc(var(--pad-x) * -0.55);
+      }
+      .car-arrow[disabled] {
+        opacity: 0.35;
+        pointer-events: none;
+      }
+
+      /* ============================================================
+   RESPONSIVE
+   ============================================================ */
+      @media (max-width: 1080px) {
+        .nav-links {
+          display: none;
+        }
+        .car-arrow.prev {
+          left: -8px;
+        }
+        .car-arrow.next {
+          right: -8px;
+        }
+      }
+      @media (max-width: 760px) {
+        .stage {
+          height: clamp(420px, 60vh, 560px);
+        }
+        .hero-title {
+          font-size: 30px;
+        }
+        .speed {
+          bottom: 14px;
+          padding: 10px 12px 12px;
+        }
+        .rotate-wrap {
+          right: 16px;
+          bottom: 20px;
+        }
+        .rotate-btn {
+          width: 56px;
+          height: 56px;
+        }
+        .drag-hint {
+          display: none;
+        }
+        .player {
+          flex-wrap: wrap;
+          row-gap: 8px;
+        }
+        .now {
+          flex: 1 1 100%;
+          border-right: none;
+          border-bottom: 1px solid var(--hairline);
+          padding-bottom: 10px;
+        }
+        .vol-wrap {
+          display: none;
+        }
+        .brand-sub {
+          display: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .drag-hint .hand {
+          animation: none;
+        }
+        .carousel {
+          scroll-behavior: auto;
+        }
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+      #loader {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(180deg, var(--bg-0), var(--bg-1));
+        transition: opacity 0.7s ease;
+        font-family: var(--serif);
+      }
+      #loader.done {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #loader .l-disc {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        margin: 0 auto 18px;
+        background: radial-gradient(
+          circle,
+          #efe2c6 0 15%,
+          #b06c2f 16% 30%,
+          #17130d 31% 100%
+        );
+        animation: spin 2.4s linear infinite;
+      }
+      #loader p {
+        font-size: 20px;
+        color: var(--ink-soft);
+        letter-spacing: 0.04em;
+        text-align: center;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loader" aria-hidden="true">
+      <div>
+        <div class="l-disc"></div>
+        <p>Warming up the motor…</p>
+      </div>
+    </div>
+
+    <!-- ============ NAV ============ -->
+    <header class="nav">
+      <a class="brand" href="#" aria-label="Analogic home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>
+          <span class="brand-name">Analogic</span>
+          <div class="brand-sub">3D&nbsp;VINYL&nbsp;EXPERIENCE</div>
+        </span>
+      </a>
+      <nav aria-label="Primary">
+        <ul class="nav-links">
+          <li><a href="#" aria-current="page">Player</a></li>
+          <li><a href="#collection">Collection</a></li>
+          <li><a href="#">Explore</a></li>
+          <li><a href="#">About</a></li>
+        </ul>
+      </nav>
+      <div class="nav-icons">
+        <button class="icon-btn" aria-label="Search">
+          <svg viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M21 21l-4.5-4.5" />
+          </svg>
+        </button>
+        <button class="icon-btn" aria-label="Account">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="8" r="3.6" />
+            <path d="M5 20c1.4-3.4 4-5 7-5s5.6 1.6 7 5" />
+          </svg>
+        </button>
+        <button class="icon-btn" aria-label="Menu">
+          <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============ STAGE ============ -->
+    <section class="stage" aria-label="Interactive 3D vinyl record player">
+      <canvas id="gl"></canvas>
+
+      <div class="hero-copy">
+        <div class="eyebrow">3D&nbsp;VINYL&nbsp;PLAYER</div>
+        <h1 class="hero-title">Timeless sound.<br />Made real.</h1>
+      </div>
+
+      <div class="speed" role="group" aria-label="Turntable speed">
+        <div class="speed-label">SPEED</div>
+        <div class="speed-opts">
+          <button class="speed-btn" data-speed="33" aria-pressed="true">
+            33&#8531;
+          </button>
+          <button class="speed-btn" data-speed="45" aria-pressed="false">
+            45
+          </button>
+        </div>
+      </div>
+
+      <div class="rotate-wrap">
+        <button
+          class="rotate-btn"
+          id="rotateBtn"
+          aria-label="Reset player rotation"
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="M4.5 9a8 8 0 1 1-.5 4" />
+            <path d="M4 4v5h5" />
+          </svg>
+        </button>
+        <div class="rotate-label">ROTATE</div>
+      </div>
+
+      <div class="drag-hint" id="dragHint" aria-hidden="true">
+        <span class="arr">&#8592;</span><span class="hand">&#9757;</span
+        ><span class="arr">&#8594;</span>
+        <span>&nbsp;DRAG&nbsp;TO&nbsp;ROTATE</span>
+      </div>
+    </section>
+
+    <!-- ============ PLAYER BAR ============ -->
+    <div class="player" role="region" aria-label="Music player">
+      <div class="now">
+        <div class="now-art" id="nowArt"></div>
+        <div class="now-meta">
+          <div class="now-title" id="nowTitle">Kind of Blue</div>
+          <div class="now-artist" id="nowArtist">Miles Davis</div>
+        </div>
+      </div>
+      <div class="transport">
+        <button class="t-btn" id="prevBtn" aria-label="Previous record">
+          <svg viewBox="0 0 24 24">
+            <path d="M7 5h2.4v14H7zM18.5 5v14L9.8 12z" />
+          </svg>
+        </button>
+        <button class="t-play" id="playBtn" aria-label="Play">
+          <svg id="iconPlay" viewBox="0 0 24 24" style="display: none">
+            <path d="M8 5.2v13.6L19 12z" />
+          </svg>
+          <svg id="iconPause" viewBox="0 0 24 24">
+            <path d="M7.5 5h3.4v14H7.5zM13.1 5h3.4v14h-3.4z" />
+          </svg>
+        </button>
+        <button class="t-btn" id="nextBtn" aria-label="Next record">
+          <svg viewBox="0 0 24 24">
+            <path d="M14.6 5H17v14h-2.4zM5.5 5v14l8.7-7z" />
+          </svg>
+        </button>
+      </div>
+      <div class="seek-wrap">
+        <span class="time cur" id="timeCur">00:00</span>
+        <div
+          class="seek"
+          id="seek"
+          role="slider"
+          aria-label="Seek"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          tabindex="0"
+        >
+          <div class="seek-track">
+            <div class="seek-fill" id="seekFill"></div>
+            <div class="seek-dot" id="seekDot"></div>
+          </div>
+        </div>
+        <span class="time" id="timeDur">09:22</span>
+      </div>
+      <div class="vol-wrap">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M4 9.5v5h3.2L12 19V5L7.2 9.5H4z"
+            fill="currentColor"
+            stroke="none"
+          />
+          <path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" />
+        </svg>
+        <div
+          class="vol"
+          id="vol"
+          role="slider"
+          aria-label="Volume"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="75"
+          tabindex="0"
+        >
+          <div class="vol-track">
+            <div class="vol-fill" id="volFill" style="width: 75%"></div>
+            <div class="vol-dot" id="volDot" style="left: 75%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ COLLECTION ============ -->
+    <section class="collection" id="collection" aria-label="Record collection">
+      <div class="collection-head">
+        <h2 class="collection-title">CHOOSE&nbsp;A&nbsp;RECORD</h2>
+        <div class="collection-rule" aria-hidden="true"></div>
+        <button class="view-all">
+          VIEW&nbsp;COLLECTION
+          <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" /></svg>
+        </button>
+      </div>
+      <div class="carousel-zone">
+        <button
+          class="car-arrow prev"
+          id="carPrev"
+          aria-label="Scroll collection left"
+        >
+          <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" /></svg>
+        </button>
+        <div class="carousel" id="carousel"></div>
+        <button
+          class="car-arrow next"
+          id="carNext"
+          aria-label="Scroll collection right"
+        >
+          <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" /></svg>
+        </button>
+      </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js"
+        }
+      }
+    </script>
+    <script type="module">
+      import * as THREE from "three";
+
+      /* ══════════════════════════════════════════════════════════════
+   1 · ALBUM DATA + PROCEDURAL ARTWORK
+   Every cover and record label is drawn on canvas at runtime.
+   ══════════════════════════════════════════════════════════════ */
+      const ALBUMS = [
+        {
+          id: "kob",
+          title: "Kind of Blue",
+          artist: "Miles Davis",
+          dur: 562,
+          label: "#b06c2f",
+          labelInk: "#2a1c0c",
+          style: "jazz",
+          bpm: 126,
+          root: 50,
+          cover: coverKindOfBlue,
+        },
+        {
+          id: "dawn",
+          title: "Dawn Chorus",
+          artist: "Leila Reyes",
+          dur: 341,
+          label: "#c8834a",
+          labelInk: "#3a2410",
+          style: "ambient",
+          bpm: 66,
+          root: 52,
+          cover: coverDawnChorus,
+        },
+        {
+          id: "north",
+          title: "Northern Lights",
+          artist: "Ólafur Haukur",
+          dur: 388,
+          label: "#8a9b83",
+          labelInk: "#1f2a1e",
+          style: "piano",
+          bpm: 72,
+          root: 57,
+          cover: coverNorthernLights,
+        },
+        {
+          id: "mid",
+          title: "Midnight Drive",
+          artist: "Theo Kane",
+          dur: 296,
+          label: "#1c1a17",
+          labelInk: "#c9a25e",
+          style: "synth",
+          bpm: 96,
+          root: 45,
+          cover: coverMidnightDrive,
+        },
+        {
+          id: "river",
+          title: "River Runs Deep",
+          artist: "Sarah James",
+          dur: 314,
+          label: "#e9dfc8",
+          labelInk: "#2b251c",
+          style: "folk",
+          bpm: 84,
+          root: 48,
+          cover: coverRiverRunsDeep,
+        },
+        {
+          id: "red",
+          title: "Echoes in Red",
+          artist: "Marcus Elliot",
+          dur: 329,
+          label: "#8e2f22",
+          labelInk: "#f2d9b8",
+          style: "lofi",
+          bpm: 78,
+          root: 46,
+          cover: coverEchoesInRed,
+        },
+      ];
+
+      function cnv(w, h) {
+        const c = document.createElement("canvas");
+        c.width = w;
+        c.height = h;
+        return c;
+      }
+      function grain(x, amount = 14, count = 2600) {
+        const g = x.canvas;
+        x.save();
+        x.globalAlpha = 0.05;
+        for (let i = 0; i < count; i++) {
+          const v = (Math.random() * amount) | 0;
+          x.fillStyle =
+            Math.random() > 0.5
+              ? `rgb(${255 - v},${255 - v},${255 - v})`
+              : `rgb(${v},${v},${v})`;
+          x.fillRect(
+            Math.random() * g.width,
+            Math.random() * g.height,
+            1.4,
+            1.4,
+          );
+        }
+        x.restore();
+      }
+
+      /* — Kind of Blue: near-black indigo, abstract musician silhouette, blue title — */
+      function coverKindOfBlue(x, s) {
+        const g = x.createLinearGradient(0, 0, s, s);
+        g.addColorStop(0, "#10151d");
+        g.addColorStop(0.55, "#0b0e13");
+        g.addColorStop(1, "#05070a");
+        x.fillStyle = g;
+        x.fillRect(0, 0, s, s);
+        // dim smoky glow left
+        const r = x.createRadialGradient(
+          s * 0.28,
+          s * 0.55,
+          0,
+          s * 0.28,
+          s * 0.55,
+          s * 0.7,
+        );
+        r.addColorStop(0, "rgba(60,80,110,.34)");
+        r.addColorStop(1, "rgba(0,0,0,0)");
+        x.fillStyle = r;
+        x.fillRect(0, 0, s, s);
+        // silhouette: head + shoulders, trumpet raised
+        x.fillStyle = "#04060a";
+        x.beginPath();
+        x.moveTo(s * 0.1, s);
+        x.bezierCurveTo(
+          s * 0.12,
+          s * 0.72,
+          s * 0.16,
+          s * 0.6,
+          s * 0.24,
+          s * 0.55,
+        ); // shoulder up
+        x.bezierCurveTo(
+          s * 0.26,
+          s * 0.42,
+          s * 0.24,
+          s * 0.34,
+          s * 0.3,
+          s * 0.3,
+        ); // neck→head back
+        x.bezierCurveTo(
+          s * 0.33,
+          s * 0.22,
+          s * 0.44,
+          s * 0.22,
+          s * 0.47,
+          s * 0.3,
+        ); // crown
+        x.bezierCurveTo(
+          s * 0.5,
+          s * 0.36,
+          s * 0.49,
+          s * 0.42,
+          s * 0.46,
+          s * 0.46,
+        ); // face
+        x.bezierCurveTo(
+          s * 0.52,
+          s * 0.5,
+          s * 0.58,
+          s * 0.58,
+          s * 0.6,
+          s * 0.66,
+        ); // arm out
+        x.bezierCurveTo(s * 0.55, s * 0.78, s * 0.48, s * 0.9, s * 0.46, s);
+        x.closePath();
+        x.fill();
+        // rim light on profile
+        x.strokeStyle = "rgba(120,160,210,.5)";
+        x.lineWidth = s * 0.006;
+        x.beginPath();
+        x.moveTo(s * 0.3, s * 0.3);
+        x.bezierCurveTo(
+          s * 0.33,
+          s * 0.22,
+          s * 0.44,
+          s * 0.22,
+          s * 0.47,
+          s * 0.3,
+        );
+        x.bezierCurveTo(
+          s * 0.5,
+          s * 0.36,
+          s * 0.49,
+          s * 0.42,
+          s * 0.46,
+          s * 0.46,
+        );
+        x.stroke();
+        // trumpet hint
+        x.strokeStyle = "rgba(200,170,110,.75)";
+        x.lineWidth = s * 0.012;
+        x.lineCap = "round";
+        x.beginPath();
+        x.moveTo(s * 0.47, s * 0.44);
+        x.lineTo(s * 0.62, s * 0.52);
+        x.stroke();
+        x.beginPath();
+        x.arc(s * 0.645, s * 0.532, s * 0.028, 0, 7);
+        x.strokeStyle = "rgba(200,170,110,.55)";
+        x.stroke();
+        // title
+        x.textAlign = "left";
+        x.font = `600 ${s * 0.085}px Inter, sans-serif`;
+        x.fillStyle = "#e8eef6";
+        x.fillText("KIND OF", s * 0.6, s * 0.2);
+        x.fillStyle = "#4d84c9";
+        x.font = `600 ${s * 0.115}px Inter, sans-serif`;
+        const word = "BLUE";
+        let cx = s * 0.6;
+        for (const ch of word) {
+          x.fillText(ch, cx, s * 0.315);
+          cx += x.measureText(ch).width + s * 0.028;
+        }
+        x.font = `500 ${s * 0.037}px Inter, sans-serif`;
+        x.fillStyle = "#93a6bd";
+        x.fillText("MILES DAVIS", s * 0.6, s * 0.385);
+        grain(x, 20);
+      }
+
+      /* — Dawn Chorus: warm gradient sky, nested arches — */
+      function coverDawnChorus(x, s) {
+        const g = x.createLinearGradient(0, 0, 0, s);
+        g.addColorStop(0, "#e8b46a");
+        g.addColorStop(0.5, "#d18a4c");
+        g.addColorStop(1, "#a35a33");
+        x.fillStyle = g;
+        x.fillRect(0, 0, s, s);
+        const arch = (w, h, col) => {
+          x.fillStyle = col;
+          x.beginPath();
+          x.moveTo(s / 2 - w / 2, s * 0.92);
+          x.lineTo(s / 2 - w / 2, s * 0.92 - h + w / 2);
+          x.arc(s / 2, s * 0.92 - h + w / 2, w / 2, Math.PI, 0);
+          x.lineTo(s / 2 + w / 2, s * 0.92);
+          x.closePath();
+          x.fill();
+        };
+        arch(s * 0.62, s * 0.6, "#b96f3d");
+        arch(s * 0.48, s * 0.5, "#8f4a2c");
+        arch(s * 0.34, s * 0.4, "#e8c07c");
+        arch(s * 0.2, s * 0.3, "#6e3520");
+        // sun
+        x.fillStyle = "rgba(250,225,170,.9)";
+        x.beginPath();
+        x.arc(s / 2, s * 0.53, s * 0.045, 0, 7);
+        x.fill();
+        x.textAlign = "center";
+        x.fillStyle = "#f7e6c8";
+        x.font = `500 ${s * 0.075}px 'Cormorant Garamond', serif`;
+        x.letterSpacing = s * 0.02 + "px";
+        x.fillText("DAWN", s / 2, s * 0.135);
+        x.fillText("CHORUS", s / 2, s * 0.215);
+        x.letterSpacing = "0px";
+        x.font = `500 ${s * 0.032}px Inter, sans-serif`;
+        x.fillStyle = "rgba(247,230,200,.8)";
+        x.fillText("LEILA REYES", s / 2, s * 0.27);
+        grain(x);
+      }
+
+      /* — Northern Lights: pale nordic landscape — */
+      function coverNorthernLights(x, s) {
+        const g = x.createLinearGradient(0, 0, 0, s);
+        g.addColorStop(0, "#dfe6d8");
+        g.addColorStop(0.55, "#c3d0bd");
+        g.addColorStop(1, "#9db29b");
+        x.fillStyle = g;
+        x.fillRect(0, 0, s, s);
+        // faint aurora band
+        x.save();
+        x.globalAlpha = 0.3;
+        const a = x.createLinearGradient(0, s * 0.18, s, s * 0.34);
+        a.addColorStop(0, "rgba(140,190,160,0)");
+        a.addColorStop(0.5, "rgba(150,200,180,.8)");
+        a.addColorStop(1, "rgba(140,190,160,0)");
+        x.fillStyle = a;
+        x.beginPath();
+        x.moveTo(0, s * 0.3);
+        x.bezierCurveTo(s * 0.3, s * 0.2, s * 0.7, s * 0.34, s, s * 0.22);
+        x.lineTo(s, s * 0.34);
+        x.bezierCurveTo(s * 0.7, s * 0.46, s * 0.3, s * 0.32, 0, s * 0.42);
+        x.closePath();
+        x.fill();
+        x.restore();
+        // mountains, three planes
+        const ridge = (y, amp, col) => {
+          x.fillStyle = col;
+          x.beginPath();
+          x.moveTo(0, s);
+          x.lineTo(0, y);
+          for (let i = 0; i <= 8; i++) {
+            const px = (i / 8) * s,
+              py = y + Math.sin(i * 2.1 + amp) * amp - (i % 3 ? amp * 0.4 : 0);
+            x.lineTo(px, py);
+          }
+          x.lineTo(s, s);
+          x.closePath();
+          x.fill();
+        };
+        ridge(s * 0.52, s * 0.05, "#7f927e");
+        ridge(s * 0.62, s * 0.07, "#5d705f");
+        ridge(s * 0.76, s * 0.045, "#43533f");
+        // water strip
+        x.fillStyle = "#b9c9b4";
+        x.fillRect(0, s * 0.88, s, s * 0.12);
+        x.textAlign = "left";
+        x.fillStyle = "#2c3a2c";
+        x.font = `600 ${s * 0.062}px Inter, sans-serif`;
+        x.fillText("NORTHERN LIGHTS", s * 0.07, s * 0.13);
+        x.font = `500 ${s * 0.032}px Inter, sans-serif`;
+        x.fillStyle = "#4c5c4a";
+        x.fillText("ÓLAFUR HAUKUR", s * 0.07, s * 0.185);
+        grain(x);
+      }
+
+      /* — Midnight Drive: black field, gold scribbled circle — */
+      function coverMidnightDrive(x, s) {
+        const g = x.createRadialGradient(
+          s / 2,
+          s * 0.6,
+          0,
+          s / 2,
+          s * 0.6,
+          s * 0.8,
+        );
+        g.addColorStop(0, "#191713");
+        g.addColorStop(1, "#0b0a08");
+        x.fillStyle = g;
+        x.fillRect(0, 0, s, s);
+        // scribbled ring — many noisy circle passes
+        x.strokeStyle = "rgba(201,162,94,.5)";
+        x.lineWidth = s * 0.0035;
+        x.lineCap = "round";
+        const cx0 = s / 2,
+          cy0 = s * 0.6,
+          R = s * 0.26;
+        for (let p = 0; p < 14; p++) {
+          x.beginPath();
+          const wob = Math.random() * s * 0.02 + s * 0.004,
+            ph = Math.random() * 7;
+          for (let a = 0; a <= Math.PI * 2.15; a += 0.05) {
+            const rr =
+              R +
+              Math.sin(a * 3 + ph) * wob +
+              (Math.random() - 0.5) * s * 0.006;
+            const px = cx0 + Math.cos(a) * rr,
+              py = cy0 + Math.sin(a) * rr * 0.96;
+            a === 0 ? x.moveTo(px, py) : x.lineTo(px, py);
+          }
+          x.globalAlpha = 0.25 + Math.random() * 0.4;
+          x.stroke();
+        }
+        x.globalAlpha = 1;
+        x.textAlign = "center";
+        x.fillStyle = "#e9dcc2";
+        x.font = `600 ${s * 0.058}px Inter, sans-serif`;
+        x.fillText("MIDNIGHT DRIVE", s / 2, s * 0.14);
+        x.font = `500 ${s * 0.03}px Inter, sans-serif`;
+        x.fillStyle = "#8d7f63";
+        x.fillText("THEO KANE", s / 2, s * 0.195);
+        grain(x, 24);
+      }
+
+      /* — River Runs Deep: cream paper, ink tree — */
+      function coverRiverRunsDeep(x, s) {
+        x.fillStyle = "#ece3cd";
+        x.fillRect(0, 0, s, s);
+        const p = x.createLinearGradient(0, 0, 0, s);
+        p.addColorStop(0, "rgba(255,250,238,.6)");
+        p.addColorStop(1, "rgba(190,175,140,.25)");
+        x.fillStyle = p;
+        x.fillRect(0, 0, s, s);
+        // recursive ink tree
+        x.strokeStyle = "#20211c";
+        x.lineCap = "round";
+        function branch(bx, by, ang, len, w, depth) {
+          if (depth <= 0 || len < s * 0.012) return;
+          const ex = bx + Math.cos(ang) * len,
+            ey = by + Math.sin(ang) * len;
+          x.lineWidth = w;
+          x.beginPath();
+          x.moveTo(bx, by);
+          x.lineTo(ex, ey);
+          x.stroke();
+          const n = depth > 5 ? 2 : Math.random() > 0.3 ? 2 : 3;
+          for (let i = 0; i < n; i++)
+            branch(
+              ex,
+              ey,
+              ang + (Math.random() - 0.5) * 1.15,
+              len * (0.62 + Math.random() * 0.2),
+              w * 0.62,
+              depth - 1,
+            );
+        }
+        branch(s * 0.5, s * 0.8, -Math.PI / 2, s * 0.17, s * 0.017, 8);
+        // ground line + reflection
+        x.lineWidth = s * 0.004;
+        x.beginPath();
+        x.moveTo(s * 0.2, s * 0.805);
+        x.lineTo(s * 0.8, s * 0.805);
+        x.stroke();
+        x.save();
+        x.globalAlpha = 0.14;
+        x.translate(0, s * 1.615);
+        x.scale(1, -1);
+        branch(s * 0.5, s * 0.8, -Math.PI / 2, s * 0.14, s * 0.014, 6);
+        x.restore();
+        x.textAlign = "center";
+        x.fillStyle = "#2b2a24";
+        x.font = `600 ${s * 0.056}px Inter, sans-serif`;
+        x.fillText("RIVER RUNS DEEP", s / 2, s * 0.905);
+        x.font = `500 ${s * 0.03}px Inter, sans-serif`;
+        x.fillStyle = "#6d6a5c";
+        x.fillText("SARAH JAMES", s / 2, s * 0.955);
+        grain(x);
+      }
+
+      /* — Echoes in Red: deep red, dark profile — */
+      function coverEchoesInRed(x, s) {
+        const g = x.createLinearGradient(0, 0, s, s);
+        g.addColorStop(0, "#9c3325");
+        g.addColorStop(0.6, "#7d251a");
+        g.addColorStop(1, "#571710");
+        x.fillStyle = g;
+        x.fillRect(0, 0, s, s);
+        // profile silhouette facing left
+        x.fillStyle = "#3a0f0a";
+        x.beginPath();
+        x.moveTo(s * 0.3, s);
+        x.lineTo(s * 0.32, s * 0.62); // neck front
+        x.bezierCurveTo(
+          s * 0.27,
+          s * 0.58,
+          s * 0.28,
+          s * 0.52,
+          s * 0.31,
+          s * 0.5,
+        ); // chin
+        x.bezierCurveTo(
+          s * 0.28,
+          s * 0.485,
+          s * 0.285,
+          s * 0.455,
+          s * 0.315,
+          s * 0.45,
+        ); // lips
+        x.bezierCurveTo(
+          s * 0.29,
+          s * 0.42,
+          s * 0.3,
+          s * 0.385,
+          s * 0.335,
+          s * 0.375,
+        ); // nose
+        x.bezierCurveTo(
+          s * 0.325,
+          s * 0.33,
+          s * 0.35,
+          s * 0.26,
+          s * 0.43,
+          s * 0.235,
+        ); // brow→forehead
+        x.bezierCurveTo(
+          s * 0.56,
+          s * 0.2,
+          s * 0.66,
+          s * 0.28,
+          s * 0.665,
+          s * 0.42,
+        ); // crown/back hair
+        x.bezierCurveTo(s * 0.67, s * 0.58, s * 0.62, s * 0.7, s * 0.6, s);
+        x.closePath();
+        x.fill();
+        // warm rim on face edge
+        x.strokeStyle = "rgba(240,170,120,.35)";
+        x.lineWidth = s * 0.006;
+        x.beginPath();
+        x.moveTo(s * 0.31, s * 0.5);
+        x.bezierCurveTo(
+          s * 0.28,
+          s * 0.485,
+          s * 0.285,
+          s * 0.455,
+          s * 0.315,
+          s * 0.45,
+        );
+        x.bezierCurveTo(
+          s * 0.29,
+          s * 0.42,
+          s * 0.3,
+          s * 0.385,
+          s * 0.335,
+          s * 0.375,
+        );
+        x.stroke();
+        x.textAlign = "right";
+        x.font = `600 ${s * 0.062}px Inter, sans-serif`;
+        x.fillStyle = "rgba(240,210,170,.42)";
+        x.fillText("ECHOES", s * 0.93, s * 0.145);
+        x.fillText("IN RED", s * 0.93, s * 0.225);
+        x.font = `500 ${s * 0.028}px Inter, sans-serif`;
+        x.fillStyle = "rgba(240,210,170,.5)";
+        x.fillText("MARCUS ELLIOT", s * 0.93, s * 0.28);
+        grain(x, 26);
+      }
+
+      /* cover factory */
+      function makeCover(album, size = 640) {
+        const c = cnv(size, size),
+          x = c.getContext("2d");
+        album.cover(x, size);
+        return c;
+      }
+
+      /* — record center label (canvas → texture) — */
+      function makeLabel(album, size = 512) {
+        const c = cnv(size, size),
+          x = c.getContext("2d"),
+          m = size / 2;
+        x.fillStyle = album.label;
+        x.beginPath();
+        x.arc(m, m, m, 0, 7);
+        x.fill();
+        // paper texture
+        grain(x, 16, 1800);
+        // rings
+        x.strokeStyle = album.labelInk;
+        x.globalAlpha = 0.65;
+        x.lineWidth = size * 0.006;
+        x.beginPath();
+        x.arc(m, m, size * 0.46, 0, 7);
+        x.stroke();
+        x.globalAlpha = 0.35;
+        x.lineWidth = size * 0.003;
+        x.beginPath();
+        x.arc(m, m, size * 0.42, 0, 7);
+        x.stroke();
+        x.beginPath();
+        x.arc(m, m, size * 0.13, 0, 7);
+        x.stroke();
+        x.globalAlpha = 1;
+        x.fillStyle = album.labelInk;
+        x.textAlign = "center";
+        x.font = `700 ${size * 0.062}px Inter, sans-serif`;
+        x.fillText(album.title.toUpperCase(), m, size * 0.3);
+        x.font = `500 ${size * 0.04}px Inter, sans-serif`;
+        x.fillText(album.artist.toUpperCase(), m, size * 0.365);
+        // arc text bottom: STEREO
+        x.save();
+        x.translate(m, m);
+        x.font = `600 ${size * 0.036}px Inter, sans-serif`;
+        const word = "· STEREO ·";
+        const arcR = size * 0.3;
+        const total = 0.7;
+        let a0 = Math.PI / 2 - total / 2;
+        for (let i = 0; i < word.length; i++) {
+          const a = a0 + total * (i / (word.length - 1));
+          x.save();
+          x.rotate(a);
+          x.translate(0, arcR);
+          x.rotate(Math.PI);
+          x.fillText(word[i], 0, 0);
+          x.restore();
+        }
+        x.restore();
+        x.font = `500 ${size * 0.03}px Inter, sans-serif`;
+        x.fillText("33⅓ RPM · LONG PLAY", m, size * 0.66);
+        x.fillText("SIDE A", m, size * 0.715);
+        // spindle hole
+        x.globalCompositeOperation = "destination-out";
+        x.beginPath();
+        x.arc(m, m, size * 0.028, 0, 7);
+        x.fill();
+        x.globalCompositeOperation = "source-over";
+        x.strokeStyle = "rgba(0,0,0,.4)";
+        x.lineWidth = 2;
+        x.beginPath();
+        x.arc(m, m, size * 0.028, 0, 7);
+        x.stroke();
+        return c;
+      }
+
+      /* ══════════════════════════════════════════════════════════════
+   2 · MATERIAL TEXTURES — wood grain, vinyl grooves, brushed metal
+   ══════════════════════════════════════════════════════════════ */
+      function texWood(size = 1024) {
+        const c = cnv(size, size),
+          x = c.getContext("2d");
+        const g = x.createLinearGradient(0, 0, size, size * 0.2);
+        g.addColorStop(0, "#5a3a22");
+        g.addColorStop(0.5, "#4c2f1a");
+        g.addColorStop(1, "#5f3d24");
+        x.fillStyle = g;
+        x.fillRect(0, 0, size, size);
+        // long grain streaks
+        for (let i = 0; i < 220; i++) {
+          const y = Math.random() * size,
+            len = size * (0.4 + Math.random() * 0.8),
+            sx = Math.random() * size - len / 2;
+          const light = Math.random() > 0.5;
+          x.strokeStyle = light
+            ? `rgba(150,100,58,${0.05 + Math.random() * 0.12})`
+            : `rgba(28,16,7,${0.06 + Math.random() * 0.14})`;
+          x.lineWidth = 0.6 + Math.random() * 2.4;
+          x.beginPath();
+          x.moveTo(sx, y);
+          for (let t = 0; t <= 1; t += 0.12)
+            x.lineTo(
+              sx + len * t,
+              y + Math.sin(t * 9 + i) * 2.4 + (Math.random() - 0.5) * 1.6,
+            );
+          x.stroke();
+        }
+        // cathedral arcs
+        for (let k = 0; k < 4; k++) {
+          const cx0 = Math.random() * size,
+            cy0 = Math.random() * size;
+          x.strokeStyle = "rgba(30,17,8,.10)";
+          for (let r = 8; r < size * 0.3; r += 7 + Math.random() * 8) {
+            x.lineWidth = 1 + Math.random() * 1.6;
+            x.beginPath();
+            x.ellipse(cx0, cy0, r * 2.4, r * 0.5, 0, -0.4, 3.5);
+            x.stroke();
+          }
+        }
+        grain(x, 20, 3200);
+        return c;
+      }
+      function texWoodBump(size = 512) {
+        const c = cnv(size, size),
+          x = c.getContext("2d");
+        x.fillStyle = "#808080";
+        x.fillRect(0, 0, size, size);
+        for (let i = 0; i < 180; i++) {
+          const y = Math.random() * size;
+          x.strokeStyle = `rgba(${Math.random() > 0.5 ? 255 : 0},${Math.random() > 0.5 ? 255 : 0},0,.08)`;
+          const v = Math.random() > 0.5 ? 255 : 20;
+          x.strokeStyle = `rgba(${v},${v},${v},.09)`;
+          x.lineWidth = 0.6 + Math.random() * 1.8;
+          x.beginPath();
+          x.moveTo(0, y);
+          for (let t = 0; t <= 1; t += 0.1)
+            x.lineTo(size * t, y + Math.sin(t * 8 + i) * 2);
+          x.stroke();
+        }
+        return c;
+      }
+
+      /* vinyl top: color map + bump grooves. Grooves are geometry-scale
+   concentric rings so specular highlights shimmer radially as the
+   record spins (the texture rotates with the mesh). */
+      function texVinyl(size = 2048) {
+        const c = cnv(size, size),
+          x = c.getContext("2d"),
+          m = size / 2;
+        x.fillStyle = "#0a0a0b";
+        x.fillRect(0, 0, size, size);
+        const rLabel = size * 0.155,
+          rDead = size * 0.205,
+          rOut = size * 0.492;
+        // dead wax / run-out: smooth, glossier ring between grooves and label
+        x.fillStyle = "#101013";
+        x.beginPath();
+        x.arc(m, m, rDead, 0, 7);
+        x.arc(m, m, rLabel, 0, 7, true);
+        x.fill("evenodd");
+        x.strokeStyle = "rgba(190,190,200,.14)";
+        x.lineWidth = 1; // faint run-out spiral
+        x.beginPath();
+        for (let a = 0; a < 22; a += 0.05)
+          x.lineTo(
+            m + Math.cos(a) * (rDead - 3 - a * 1.1),
+            m + Math.sin(a) * (rDead - 3 - a * 1.1),
+          );
+        x.stroke();
+        // groove sheen: alternating micro rings
+        for (let r = rDead + size * 0.004; r < rOut; r += 1.35) {
+          const t = (r - rDead) / (rOut - rDead);
+          const band = Math.sin(t * 260) * 0.5 + 0.5; // program bands
+          const v = 8 + band * 7 + Math.random() * 5;
+          x.strokeStyle = `rgb(${v},${v},${v + 2})`;
+          x.lineWidth = 1.1;
+          x.beginPath();
+          x.arc(m, m, r, 0, 7);
+          x.stroke();
+        }
+        // track separation gaps (shinier)
+        [0.3, 0.52, 0.74].forEach((t) => {
+          const r = rDead + (rOut - rDead) * t;
+          x.strokeStyle = "#1f1f22";
+          x.lineWidth = size * 0.004;
+          x.beginPath();
+          x.arc(m, m, r, 0, 7);
+          x.stroke();
+        });
+        // lead-in / lead-out
+        x.strokeStyle = "#232326";
+        x.lineWidth = size * 0.005;
+        x.beginPath();
+        x.arc(m, m, rOut - size * 0.006, 0, 7);
+        x.stroke();
+        x.beginPath();
+        x.arc(m, m, rDead + size * 0.003, 0, 7);
+        x.stroke();
+        // faint hairline scratches
+        x.strokeStyle = "rgba(120,120,125,.10)";
+        x.lineWidth = 1;
+        for (let i = 0; i < 10; i++) {
+          const a0 = Math.random() * 7,
+            al = 0.15 + Math.random() * 0.5,
+            rr = rDead + Math.random() * (rOut - rDead);
+          x.beginPath();
+          x.arc(m, m, rr, a0, a0 + al);
+          x.stroke();
+        }
+        // dust specks
+        x.fillStyle = "rgba(190,185,175,.15)";
+        for (let i = 0; i < 80; i++) {
+          const a = Math.random() * 7,
+            rr = rDead + Math.random() * (rOut - rDead);
+          x.fillRect(m + Math.cos(a) * rr, m + Math.sin(a) * rr, 1.3, 1.3);
+        }
+        return c;
+      }
+      function texVinylBump(size = 1024) {
+        const c = cnv(size, size),
+          x = c.getContext("2d"),
+          m = size / 2;
+        x.fillStyle = "#808080";
+        x.fillRect(0, 0, size, size);
+        const rDead = size * 0.205,
+          rOut = size * 0.492;
+        for (let r = rDead; r < rOut; r += 2) {
+          x.strokeStyle = ((r / 2) | 0) % 2 ? "#6e6e6e" : "#929292";
+          x.lineWidth = 1.2;
+          x.beginPath();
+          x.arc(m, m, r, 0, 7);
+          x.stroke();
+        }
+        return c;
+      }
+
+      /* platter: brushed circular aluminum roughness */
+      function texBrushed(size = 1024) {
+        const c = cnv(size, size),
+          x = c.getContext("2d"),
+          m = size / 2;
+        x.fillStyle = "#b9b9bd";
+        x.fillRect(0, 0, size, size);
+        for (let r = 6; r < size * 0.5; r += 1.5) {
+          const v = 165 + Math.random() * 70;
+          x.strokeStyle = `rgba(${v},${v},${v + 4},.5)`;
+          x.lineWidth = 1;
+          x.beginPath();
+          x.arc(m, m, r, 0, 7);
+          x.stroke();
+        }
+        // strobe dots near rim
+        x.fillStyle = "#3a3a3d";
+        const n = 140,
+          rr = size * 0.472;
+        for (let i = 0; i < n; i++) {
+          const a = (i / n) * Math.PI * 2;
+          x.beginPath();
+          x.arc(m + Math.cos(a) * rr, m + Math.sin(a) * rr, size * 0.004, 0, 7);
+          x.fill();
+        }
+        return c;
+      }
+
+      /* rubber mat with ribbed rings */
+      function texMat(size = 1024) {
+        const c = cnv(size, size),
+          x = c.getContext("2d"),
+          m = size / 2;
+        x.fillStyle = "#151412";
+        x.fillRect(0, 0, size, size);
+        for (let r = size * 0.06; r < size * 0.5; r += size * 0.024) {
+          x.strokeStyle = "rgba(255,255,255,.05)";
+          x.lineWidth = size * 0.006;
+          x.beginPath();
+          x.arc(m, m, r, 0, 7);
+          x.stroke();
+          x.strokeStyle = "rgba(0,0,0,.5)";
+          x.lineWidth = size * 0.004;
+          x.beginPath();
+          x.arc(m, m, r + size * 0.007, 0, 7);
+          x.stroke();
+        }
+        grain(x, 16, 1600);
+        return c;
+      }
+
+      /* brass front plaque: “Analogic — STEREO TURNTABLE” */
+      function texPlaque(w = 768, h = 224) {
+        const c = cnv(w, h),
+          x = c.getContext("2d");
+        const g = x.createLinearGradient(0, 0, 0, h);
+        g.addColorStop(0, "#1c1610");
+        g.addColorStop(1, "#0f0b07");
+        x.fillStyle = g;
+        x.fillRect(0, 0, w, h);
+        x.strokeStyle = "#caa25e";
+        x.lineWidth = 5;
+        x.strokeRect(10, 10, w - 20, h - 20);
+        x.strokeStyle = "rgba(202,162,94,.4)";
+        x.lineWidth = 2;
+        x.strokeRect(20, 20, w - 40, h - 40);
+        x.textAlign = "center";
+        x.fillStyle = "#e8c684";
+        x.font = `600 ${h * 0.34}px 'Cormorant Garamond', serif`;
+        x.fillText("Analogic", w / 2, h * 0.48);
+        x.font = `600 ${h * 0.135}px Inter, sans-serif`;
+        x.fillStyle = "#caa25e";
+        x.save();
+        x.letterSpacing = `${h * 0.06}px`;
+        x.fillText("STEREO TURNTABLE", w / 2, h * 0.74);
+        x.restore();
+        return c;
+      }
+
+      /* deck print (light lettering silk-screened onto the wood) */
+      function texDeckPrint(main, subs, w = 512, h = 256) {
+        const c = cnv(w, h),
+          x = c.getContext("2d");
+        x.clearRect(0, 0, w, h);
+        x.textAlign = "center";
+        x.fillStyle = "rgba(240,228,205,.92)";
+        x.font = `600 ${h * 0.19}px Inter, sans-serif`;
+        x.save();
+        x.letterSpacing = `${h * 0.05}px`;
+        x.fillText(main, w / 2, h * 0.24);
+        x.restore();
+        if (subs) {
+          x.font = `500 ${h * 0.13}px Inter, sans-serif`;
+          x.fillStyle = "rgba(240,228,205,.75)";
+          x.textAlign = "left";
+          x.fillText(subs[0], w * 0.03, h * 0.92);
+          x.textAlign = "right";
+          x.fillText(subs[1], w * 0.97, h * 0.92);
+        }
+        return c;
+      }
+
+      function ctex(canvas, { srgb = true, aniso = 8, repeat } = {}) {
+        const t = new THREE.CanvasTexture(canvas);
+        if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+        t.anisotropy = aniso;
+        if (repeat) {
+          t.wrapS = t.wrapT = THREE.RepeatWrapping;
+          t.repeat.set(repeat[0], repeat[1]);
+        }
+        return t;
+      }
+
+      /* ══════════════════════════════════════════════════════════════
+   3 · RENDERER · SCENE · CAMERA · LIGHTING
+   ══════════════════════════════════════════════════════════════ */
+      const canvas = document.getElementById("gl");
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+      });
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.06;
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(32, 2, 0.1, 60);
+      const camHome = new THREE.Vector3(0.12, 2.68, 6.5);
+      camera.position.copy(camHome);
+      camera.lookAt(0, 0.1, 0);
+
+      /* PMREM studio environment — a warm little light room built from
+   emissive planes, prefiltered for PBR reflections. */
+      {
+        const envScene = new THREE.Scene();
+        envScene.background = new THREE.Color("#2e2a24");
+        const panel = (w, h, c, i, x, y, z, rx = 0, ry = 0) => {
+          const m = new THREE.Mesh(
+            new THREE.PlaneGeometry(w, h),
+            new THREE.MeshBasicMaterial({
+              color: new THREE.Color(c).multiplyScalar(i),
+            }),
+          );
+          m.position.set(x, y, z);
+          m.rotation.set(rx, ry, 0);
+          envScene.add(m);
+        };
+        panel(6, 3, "#fff2dc", 9, 0, 4.5, -2, -Math.PI / 2, 0); // big warm softbox above
+        panel(2.5, 4, "#ffe9c8", 5, -5, 2, 0, 0, Math.PI / 2); // key left
+        panel(2, 3, "#dfe6f2", 2.5, 5, 1.5, 1, 0, -Math.PI / 2); // cool fill right
+        panel(8, 2, "#f3e3c6", 1.2, 0, 1, 5, 0, Math.PI); // front bounce
+        const pm = new THREE.PMREMGenerator(renderer);
+        scene.environment = pm.fromScene(envScene, 0.04).texture;
+        pm.dispose();
+      }
+
+      /* lights */
+      const hemi = new THREE.HemisphereLight("#fff4e0", "#8a7355", 0.55);
+      scene.add(hemi);
+      const key = new THREE.DirectionalLight("#fff0d8", 2.0);
+      key.position.set(-4.5, 7, 4);
+      key.castShadow = true;
+      key.shadow.mapSize.set(2048, 2048);
+      key.shadow.camera.left = -4;
+      key.shadow.camera.right = 4;
+      key.shadow.camera.top = 4;
+      key.shadow.camera.bottom = -4;
+      key.shadow.bias = -0.0004;
+      key.shadow.radius = 6;
+      scene.add(key);
+      const rim = new THREE.DirectionalLight("#ffe2b0", 0.9);
+      rim.position.set(3.5, 4.5, -5);
+      scene.add(rim);
+      const fill = new THREE.DirectionalLight("#e8ecf4", 0.35);
+      fill.position.set(4, 2, 4);
+      scene.add(fill);
+
+      /* contact shadow: soft radial gradient plane under the player */
+      {
+        const c = cnv(512, 512),
+          x = c.getContext("2d");
+        const g = x.createRadialGradient(256, 256, 30, 256, 256, 250);
+        g.addColorStop(0, "rgba(52,36,14,.42)");
+        g.addColorStop(0.55, "rgba(52,36,14,.20)");
+        g.addColorStop(1, "rgba(52,36,14,0)");
+        x.fillStyle = g;
+        x.fillRect(0, 0, 512, 512);
+        const m = new THREE.Mesh(
+          new THREE.PlaneGeometry(7.6, 5.4),
+          new THREE.MeshBasicMaterial({
+            map: ctex(c),
+            transparent: true,
+            depthWrite: false,
+          }),
+        );
+        m.rotation.x = -Math.PI / 2;
+        m.position.y = -0.72;
+        scene.add(m);
+      }
+      /* ground plane receives the crisper key-light shadow */
+      {
+        const m = new THREE.Mesh(
+          new THREE.PlaneGeometry(30, 30),
+          new THREE.ShadowMaterial({ opacity: 0.16 }),
+        );
+        m.rotation.x = -Math.PI / 2;
+        m.position.y = -0.715;
+        m.receiveShadow = true;
+        scene.add(m);
+      }
+
+      /* ══════════════════════════════════════════════════════════════
+   4 · THE TURNTABLE — every part procedural geometry
+   ══════════════════════════════════════════════════════════════ */
+      const player = new THREE.Group(); // drag-to-rotate root
+      scene.add(player);
+
+      const M = {
+        wood: new THREE.MeshPhysicalMaterial({
+          // lacquered walnut
+          map: ctex(texWood(), { repeat: [1, 1] }),
+          bumpMap: ctex(texWoodBump(), { srgb: false }),
+          bumpScale: 0.4,
+          color: "#a97e52",
+          roughness: 0.38,
+          metalness: 0,
+          envMapIntensity: 0.7,
+          clearcoat: 0.45,
+          clearcoatRoughness: 0.35,
+        }),
+        woodDark: new THREE.MeshStandardMaterial({
+          color: "#2c1c10",
+          roughness: 0.6,
+        }),
+        alu: new THREE.MeshStandardMaterial({
+          color: "#d6d6da",
+          metalness: 0.95,
+          roughness: 0.34,
+          roughnessMap: ctex(texBrushed(), { srgb: false }),
+          envMapIntensity: 1.15,
+        }),
+        chrome: new THREE.MeshStandardMaterial({
+          color: "#e8e8ee",
+          metalness: 1,
+          roughness: 0.12,
+          envMapIntensity: 1.3,
+        }),
+        steel: new THREE.MeshStandardMaterial({
+          color: "#9a9aa0",
+          metalness: 0.9,
+          roughness: 0.35,
+        }),
+        brass: new THREE.MeshStandardMaterial({
+          color: "#c9a25e",
+          metalness: 0.9,
+          roughness: 0.3,
+          envMapIntensity: 1.1,
+        }),
+        blackMetal: new THREE.MeshStandardMaterial({
+          color: "#1a1a1c",
+          metalness: 0.7,
+          roughness: 0.42,
+        }),
+        blackGloss: new THREE.MeshPhysicalMaterial({
+          color: "#101012",
+          metalness: 0.2,
+          roughness: 0.2,
+          clearcoat: 0.8,
+          clearcoatRoughness: 0.2,
+        }),
+        blackPlastic: new THREE.MeshStandardMaterial({
+          color: "#141312",
+          metalness: 0.1,
+          roughness: 0.55,
+        }),
+        rubber: new THREE.MeshStandardMaterial({
+          map: ctex(texMat()),
+          color: "#ffffff",
+          roughness: 0.92,
+          metalness: 0,
+          envMapIntensity: 0.25,
+        }),
+        vinyl: new THREE.MeshPhysicalMaterial({
+          map: ctex(texVinyl()),
+          bumpMap: ctex(texVinylBump(), { srgb: false }),
+          bumpScale: 1.6,
+          color: "#ffffff",
+          roughness: 0.34,
+          metalness: 0.05,
+          clearcoat: 0.65,
+          clearcoatRoughness: 0.3,
+          envMapIntensity: 1.5,
+        }),
+      };
+
+      const PLATTER_C = new THREE.Vector3(-0.45, 0, -0.1); // platter centre (deck top = y0)
+
+      /* — plinth: rounded-rect extrusion with beveled edges — */
+      {
+        const w = 4.7,
+          d = 3.3,
+          r = 0.16;
+        const sh = new THREE.Shape();
+        sh.moveTo(-w / 2 + r, -d / 2);
+        sh.lineTo(w / 2 - r, -d / 2);
+        sh.quadraticCurveTo(w / 2, -d / 2, w / 2, -d / 2 + r);
+        sh.lineTo(w / 2, d / 2 - r);
+        sh.quadraticCurveTo(w / 2, d / 2, w / 2 - r, d / 2);
+        sh.lineTo(-w / 2 + r, d / 2);
+        sh.quadraticCurveTo(-w / 2, d / 2, -w / 2, d / 2 - r);
+        sh.lineTo(-w / 2, -d / 2 + r);
+        sh.quadraticCurveTo(-w / 2, -d / 2, -w / 2 + r, -d / 2);
+        const geo = new THREE.ExtrudeGeometry(sh, {
+          depth: 0.46,
+          bevelEnabled: true,
+          bevelThickness: 0.03,
+          bevelSize: 0.03,
+          bevelSegments: 4,
+          curveSegments: 12,
+        });
+        geo.rotateX(-Math.PI / 2);
+        geo.translate(0, -0.49, 0);
+        const uv = geo.attributes.uv;
+        for (let i = 0; i < uv.count; i++) {
+          uv.setXY(i, uv.getX(i) * 0.22, uv.getY(i) * 0.22);
+        }
+        const plinth = new THREE.Mesh(geo, M.wood);
+        plinth.castShadow = plinth.receiveShadow = true;
+        player.add(plinth);
+      }
+      /* isolation feet: alloy cone + rubber ring */
+      [
+        [-2.0, -1.32],
+        [2.0, -1.32],
+        [-2.0, 1.32],
+        [2.0, 1.32],
+      ].forEach(([fx, fz]) => {
+        const f = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.14, 0.175, 0.18, 28),
+          M.blackPlastic,
+        );
+        f.position.set(fx, -0.585, fz);
+        f.castShadow = true;
+        player.add(f);
+        const ring = new THREE.Mesh(
+          new THREE.TorusGeometry(0.165, 0.016, 10, 28),
+          M.blackMetal,
+        );
+        ring.rotation.x = Math.PI / 2;
+        ring.position.set(fx, -0.655, fz);
+        player.add(ring);
+      });
+
+      /* dust cover hinges on the rear edge */
+      [[-1.35], [1.35]].forEach(([hx]) => {
+        const seat = new THREE.Mesh(
+          new THREE.BoxGeometry(0.22, 0.05, 0.08),
+          M.blackPlastic,
+        );
+        seat.position.set(hx, 0.025, -1.56);
+        seat.castShadow = true;
+        player.add(seat);
+        const barrel = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.026, 0.026, 0.22, 16),
+          M.blackMetal,
+        );
+        barrel.rotation.z = Math.PI / 2;
+        barrel.position.set(hx, 0.062, -1.585);
+        player.add(barrel);
+      });
+
+      /* rear connection panel: RCA out · ground post · power lead */
+      {
+        const plate = new THREE.Mesh(
+          new THREE.PlaneGeometry(1.0, 0.26),
+          M.blackPlastic,
+        );
+        plate.rotation.y = Math.PI;
+        plate.position.set(0.65, -0.26, -1.684);
+        player.add(plate);
+        const mkRCA = (x0, ring) => {
+          const jack = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.03, 0.03, 0.06, 18),
+            M.chrome,
+          );
+          jack.rotation.x = Math.PI / 2;
+          jack.position.set(x0, -0.24, -1.71);
+          player.add(jack);
+          const r = new THREE.Mesh(
+            new THREE.TorusGeometry(0.032, 0.01, 10, 20),
+            new THREE.MeshStandardMaterial({
+              color: ring,
+              roughness: 0.4,
+              metalness: 0.2,
+            }),
+          );
+          r.position.set(x0, -0.24, -1.735);
+          player.add(r);
+        };
+        mkRCA(0.45, "#c33b2e");
+        mkRCA(0.66, "#e8e2d4");
+        const gnd = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.018, 0.018, 0.05, 12),
+          M.brass,
+        );
+        gnd.rotation.x = Math.PI / 2;
+        gnd.position.set(0.88, -0.24, -1.705);
+        player.add(gnd);
+        // power lead: strain relief + short drooping cable
+        const relief = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.03, 0.04, 0.09, 14),
+          M.blackPlastic,
+        );
+        relief.rotation.x = Math.PI / 2;
+        relief.position.set(1.1, -0.3, -1.72);
+        player.add(relief);
+        const cable = new THREE.Mesh(
+          new THREE.TubeGeometry(
+            new THREE.CatmullRomCurve3([
+              new THREE.Vector3(1.1, -0.3, -1.76),
+              new THREE.Vector3(1.12, -0.42, -1.95),
+              new THREE.Vector3(1.16, -0.66, -2.1),
+              new THREE.Vector3(1.22, -0.705, -2.3),
+            ]),
+            24,
+            0.02,
+            10,
+          ),
+          M.blackPlastic,
+        );
+        cable.castShadow = true;
+        player.add(cable);
+      }
+
+      /* power rocker on the front-left corner */
+      {
+        const base = new THREE.Mesh(
+          new THREE.BoxGeometry(0.14, 0.024, 0.1),
+          M.steel,
+        );
+        base.position.set(-2.06, 0.012, 1.32);
+        player.add(base);
+        const rocker = new THREE.Mesh(
+          new THREE.BoxGeometry(0.1, 0.03, 0.075),
+          M.blackGloss,
+        );
+        rocker.position.set(-2.06, 0.036, 1.32);
+        rocker.rotation.x = -0.16;
+        player.add(rocker);
+      }
+
+      /* platter well: recessed seat shadow under the platter */
+      {
+        const well = new THREE.Mesh(
+          new THREE.RingGeometry(1.36, 1.52, 96),
+          new THREE.MeshBasicMaterial({
+            color: "#241a10",
+            transparent: true,
+            opacity: 0.55,
+            depthWrite: false,
+          }),
+        );
+        well.rotation.x = -Math.PI / 2;
+        well.position.set(PLATTER_C.x, 0.0015, PLATTER_C.z);
+        player.add(well);
+      }
+
+      /* — spin group: platter · strobe dots · mat · record · spindle — */
+      const spin = new THREE.Group();
+      spin.position.copy(PLATTER_C);
+      player.add(spin);
+      {
+        const platter = new THREE.Mesh(
+          new THREE.CylinderGeometry(1.42, 1.38, 0.1, 96),
+          M.alu,
+        );
+        platter.position.y = 0.05;
+        platter.castShadow = true;
+        platter.receiveShadow = true;
+        spin.add(platter);
+        // machined chrome trim at the top edge
+        const trim = new THREE.Mesh(
+          new THREE.TorusGeometry(1.415, 0.01, 8, 120),
+          M.chrome,
+        );
+        trim.rotation.x = Math.PI / 2;
+        trim.position.y = 0.098;
+        spin.add(trim);
+        // strobe dots around the rim wall (instanced)
+        const dotGeo = new THREE.SphereGeometry(0.0115, 8, 8);
+        const dots = new THREE.InstancedMesh(dotGeo, M.blackMetal, 80);
+        const mtx = new THREE.Matrix4(),
+          q = new THREE.Quaternion(),
+          s = new THREE.Vector3(1, 1, 0.5);
+        for (let i = 0; i < 80; i++) {
+          const a = (i / 80) * Math.PI * 2;
+          q.setFromEuler(new THREE.Euler(0, -a, 0));
+          mtx.compose(
+            new THREE.Vector3(Math.cos(a) * 1.412, 0.055, Math.sin(a) * 1.412),
+            q,
+            s,
+          );
+          dots.setMatrixAt(i, mtx);
+        }
+        spin.add(dots);
+        const mat = new THREE.Mesh(
+          new THREE.CylinderGeometry(1.32, 1.32, 0.022, 96),
+          M.rubber,
+        );
+        mat.position.y = 0.111;
+        spin.add(mat);
+      }
+      const recordGroup = new THREE.Group(); // lifts out on album swap
+      recordGroup.position.y = 0;
+      spin.add(recordGroup);
+      const vinylMesh = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.36, 1.352, 0.026, 128),
+        M.vinyl,
+      );
+      vinylMesh.position.y = 0.135;
+      vinylMesh.castShadow = true;
+      recordGroup.add(vinylMesh);
+      {
+        // rounded pressing edge
+        const edge = new THREE.Mesh(
+          new THREE.TorusGeometry(1.352, 0.012, 8, 140),
+          M.blackGloss,
+        );
+        edge.rotation.x = Math.PI / 2;
+        edge.position.y = 0.14;
+        recordGroup.add(edge);
+      }
+      const labelMat = new THREE.MeshStandardMaterial({
+        roughness: 0.95,
+        metalness: 0,
+        envMapIntensity: 0.3,
+      });
+      const labelMesh = new THREE.Mesh(
+        new THREE.CircleGeometry(0.435, 64),
+        labelMat,
+      );
+      labelMesh.rotation.x = -Math.PI / 2;
+      labelMesh.position.y = 0.1496;
+      recordGroup.add(labelMesh);
+      {
+        // spindle: shaft + rounded tip + bearing collar
+        const spindle = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.021, 0.021, 0.1, 20),
+          M.chrome,
+        );
+        spindle.position.y = 0.17;
+        spin.add(spindle);
+        const tip = new THREE.Mesh(
+          new THREE.SphereGeometry(0.021, 16, 12),
+          M.chrome,
+        );
+        tip.position.y = 0.219;
+        tip.scale.y = 0.55;
+        spin.add(tip);
+      }
+
+      /* 45 rpm adapter puck resting on the deck */
+      {
+        const seat = new THREE.Mesh(
+          new THREE.CircleGeometry(0.135, 40),
+          new THREE.MeshBasicMaterial({
+            color: "#2a1c0f",
+            transparent: true,
+            opacity: 0.5,
+            depthWrite: false,
+          }),
+        );
+        seat.rotation.x = -Math.PI / 2;
+        seat.position.set(-1.15, 0.002, 1.38);
+        player.add(seat);
+        const puck = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.105, 0.105, 0.042, 40),
+          M.alu,
+        );
+        puck.position.set(-1.15, 0.023, 1.38);
+        puck.castShadow = true;
+        player.add(puck);
+        const grip = new THREE.Mesh(
+          new THREE.TorusGeometry(0.098, 0.008, 8, 40),
+          M.steel,
+        );
+        grip.rotation.x = Math.PI / 2;
+        grip.position.set(-1.15, 0.045, 1.38);
+        player.add(grip);
+        const hole = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.036, 0.036, 0.046, 24),
+          M.blackPlastic,
+        );
+        hole.position.set(-1.15, 0.024, 1.38);
+        player.add(hole);
+      }
+
+      /* — tonearm assembly: base · gimbal · S-tube · headshell · counterweight — */
+      const ARM = {
+        pivot: new THREE.Vector3(1.55, 0, -0.85),
+        L: 2.05,
+        bearingY: 0.3,
+      };
+      const armRoot = new THREE.Group();
+      armRoot.position.copy(ARM.pivot);
+      player.add(armRoot);
+      const armYaw = new THREE.Group();
+      armYaw.position.y = ARM.bearingY;
+      armRoot.add(armYaw);
+      const armLift = new THREE.Group();
+      armYaw.add(armLift);
+      let cueLever;
+      {
+        // polished base disc + black housing + VTA collar
+        const disc = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.22, 0.235, 0.035, 44),
+          M.alu,
+        );
+        disc.position.y = 0.0175;
+        disc.castShadow = true;
+        armRoot.add(disc);
+        const housing = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.155, 0.17, 0.06, 40),
+          M.blackMetal,
+        );
+        housing.position.y = 0.062;
+        housing.castShadow = true;
+        armRoot.add(housing);
+        const collar = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.075, 0.075, 0.04, 28),
+          M.steel,
+        );
+        collar.position.y = 0.105;
+        armRoot.add(collar);
+        const post = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.05, 0.055, ARM.bearingY - 0.09, 24),
+          M.chrome,
+        );
+        post.position.y = (ARM.bearingY + 0.09) / 2;
+        armRoot.add(post);
+        // gimbal: vertical yoke ring + horizontal axle with pivot screws
+        const yoke = new THREE.Mesh(
+          new THREE.TorusGeometry(0.088, 0.013, 10, 36),
+          M.blackMetal,
+        );
+        yoke.rotation.y = Math.PI / 2;
+        armYaw.add(yoke);
+        const axle = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.03, 0.03, 0.2, 18),
+          M.blackMetal,
+        );
+        axle.rotation.z = Math.PI / 2;
+        armLift.add(axle);
+        [[-0.105], [0.105]].forEach(([ax]) => {
+          const screw = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.02, 0.02, 0.016, 14),
+            M.chrome,
+          );
+          screw.rotation.z = Math.PI / 2;
+          screw.position.x = ax;
+          armYaw.add(screw);
+        });
+        // screws on the base disc
+        for (let i = 0; i < 4; i++) {
+          const s = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.012, 0.012, 0.012, 10),
+            M.steel,
+          );
+          const a = (i / 4) * Math.PI * 2 + 0.4;
+          s.position.set(Math.cos(a) * 0.185, 0.038, Math.sin(a) * 0.185);
+          armRoot.add(s);
+        }
+        // cueing lever beside the pivot
+        cueLever = new THREE.Group();
+        cueLever.position.set(0.2, 0.095, 0.1);
+        armRoot.add(cueLever);
+        const lbase = new THREE.Mesh(
+          new THREE.BoxGeometry(0.045, 0.03, 0.045),
+          M.blackMetal,
+        );
+        cueLever.add(lbase);
+        const larm = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.01, 0.013, 0.15, 10),
+          M.steel,
+        );
+        larm.rotation.x = 1.15;
+        larm.position.set(0, 0.045, 0.055);
+        cueLever.add(larm);
+        const ltip = new THREE.Mesh(
+          new THREE.SphereGeometry(0.02, 12, 10),
+          M.blackGloss,
+        );
+        ltip.position.set(0, 0.075, 0.115);
+        cueLever.add(ltip);
+        cueLever.rotation.x = 0.55; // starts raised
+        // lift platform under the tube
+        const platform = new THREE.Mesh(
+          new THREE.BoxGeometry(0.05, 0.022, 0.17),
+          M.blackPlastic,
+        );
+        platform.position.set(-0.02, 0.175, -0.3);
+        platform.rotation.y = 0.35;
+        armRoot.add(platform);
+        // S-shaped arm tube along −Z, with rear stub + joining collar
+        const pts = [
+          new THREE.Vector3(0, 0, 0.08),
+          new THREE.Vector3(0.02, 0, -0.45),
+          new THREE.Vector3(0.09, -0.01, -1.05),
+          new THREE.Vector3(-0.02, -0.03, -1.65),
+          new THREE.Vector3(-0.1, -0.045, -ARM.L + 0.09),
+        ];
+        const tube = new THREE.Mesh(
+          new THREE.TubeGeometry(
+            new THREE.CatmullRomCurve3(pts),
+            48,
+            0.024,
+            12,
+          ),
+          M.chrome,
+        );
+        tube.castShadow = true;
+        armLift.add(tube);
+        const stub = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.03, 0.03, 0.26, 14),
+          M.blackMetal,
+        );
+        stub.rotation.x = Math.PI / 2;
+        stub.position.set(0, 0.002, 0.2);
+        armLift.add(stub);
+        const joint = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.034, 0.034, 0.05, 16),
+          M.steel,
+        );
+        joint.rotation.x = Math.PI / 2;
+        joint.position.set(0, 0, 0.06);
+        armLift.add(joint);
+        // headshell: shell + finger lift + cartridge + cantilever + stylus
+        const hs = new THREE.Group();
+        hs.position.set(-0.115, -0.052, -ARM.L + 0.055);
+        hs.rotation.y = 0.32;
+        armLift.add(hs);
+        const lock = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.03, 0.03, 0.05, 14),
+          M.blackMetal,
+        );
+        lock.rotation.x = Math.PI / 2;
+        lock.position.set(0, 0.01, 0.1);
+        hs.add(lock);
+        const shell = new THREE.Mesh(
+          new THREE.BoxGeometry(0.085, 0.022, 0.19),
+          M.blackGloss,
+        );
+        shell.castShadow = true;
+        hs.add(shell);
+        const lift = new THREE.Mesh(
+          new THREE.TorusGeometry(0.045, 0.006, 8, 20, 2.4),
+          M.chrome,
+        );
+        lift.rotation.set(0, 0.4, 1.1);
+        lift.position.set(0.055, 0.008, -0.055);
+        hs.add(lift);
+        const cart = new THREE.Mesh(
+          new THREE.BoxGeometry(0.066, 0.048, 0.11),
+          M.blackPlastic,
+        );
+        cart.position.set(0, -0.034, -0.025);
+        hs.add(cart);
+        const face = new THREE.Mesh(
+          new THREE.BoxGeometry(0.052, 0.034, 0.008),
+          new THREE.MeshStandardMaterial({ color: "#8e2f26", roughness: 0.5 }),
+        );
+        face.position.set(0, -0.036, -0.082);
+        hs.add(face);
+        const cant = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.004, 0.006, 0.055, 8),
+          M.steel,
+        );
+        cant.rotation.x = Math.PI / 2 - 0.5;
+        cant.position.set(0, -0.066, -0.07);
+        hs.add(cant);
+        const stylus = new THREE.Mesh(
+          new THREE.ConeGeometry(0.007, 0.024, 8),
+          M.chrome,
+        );
+        stylus.rotation.x = Math.PI;
+        stylus.position.set(0, -0.081, -0.084);
+        hs.add(stylus);
+        // headshell lead wires
+        const wires = new THREE.Mesh(
+          new THREE.TubeGeometry(
+            new THREE.CatmullRomCurve3([
+              new THREE.Vector3(0.01, 0.012, 0.075),
+              new THREE.Vector3(0.02, 0.03, 0.02),
+              new THREE.Vector3(0.005, 0.005, -0.02),
+            ]),
+            12,
+            0.005,
+            6,
+          ),
+          M.blackPlastic,
+        );
+        hs.add(wires);
+        // counterweight: knurled main + tracking-force scale ring
+        const cw = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.082, 0.082, 0.11, 32),
+          M.blackMetal,
+        );
+        cw.rotation.x = Math.PI / 2;
+        cw.position.set(0, 0.002, 0.36);
+        cw.castShadow = true;
+        armLift.add(cw);
+        const knurl = new THREE.Mesh(
+          new THREE.TorusGeometry(0.083, 0.007, 8, 40),
+          M.blackGloss,
+        );
+        knurl.position.set(0, 0.002, 0.36);
+        armLift.add(knurl);
+        const scaleRing = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.055, 0.055, 0.05, 24),
+          M.steel,
+        );
+        scaleRing.rotation.x = Math.PI / 2;
+        scaleRing.position.set(0, 0.002, 0.285);
+        armLift.add(scaleRing);
+        const scaleMark = new THREE.Mesh(
+          new THREE.BoxGeometry(0.008, 0.01, 0.048),
+          new THREE.MeshStandardMaterial({ color: "#f3ead6", roughness: 0.4 }),
+        );
+        scaleMark.position.set(0, 0.058, 0.285);
+        armLift.add(scaleMark);
+        // anti-skate dial with index dot
+        const dial = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.038, 0.042, 0.035, 20),
+          M.steel,
+        );
+        dial.position.set(0.17, 0.1, 0.16);
+        armRoot.add(dial);
+        const idx = new THREE.Mesh(
+          new THREE.BoxGeometry(0.006, 0.006, 0.024),
+          M.blackMetal,
+        );
+        idx.position.set(0.17, 0.12, 0.145);
+        armRoot.add(idx);
+        // arm rest: post + U-clip
+        const rpost = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.024, 0.028, 0.25, 16),
+          M.blackPlastic,
+        );
+        rpost.position.set(-0.26, 0.125, 0.55);
+        armRoot.add(rpost);
+        const clipBase = new THREE.Mesh(
+          new THREE.BoxGeometry(0.075, 0.022, 0.05),
+          M.blackPlastic,
+        );
+        clipBase.position.set(-0.26, 0.262, 0.55);
+        armRoot.add(clipBase);
+        [[-0.034], [0.034]].forEach(([cx]) => {
+          const prong = new THREE.Mesh(
+            new THREE.BoxGeometry(0.012, 0.06, 0.05),
+            M.blackPlastic,
+          );
+          prong.position.set(-0.26 + cx, 0.3, 0.55);
+          armRoot.add(prong);
+        });
+      }
+
+      /* stylus world-target solver: find yaw φ so the stylus lands at
+   radius r from the platter centre (front-side branch). */
+      function yawForRadius(r) {
+        const px = ARM.pivot.x - PLATTER_C.x,
+          pz = ARM.pivot.z - PLATTER_C.z;
+        let best = 0,
+          bestErr = 1e9;
+        for (let phi = 1.2; phi < 3.3; phi += 0.002) {
+          const sx = px - ARM.L * Math.sin(phi),
+            sz = pz - ARM.L * Math.cos(phi);
+          const err = Math.abs(Math.hypot(sx, sz) - r);
+          if (err < bestErr && phi > 1.9) {
+            bestErr = err;
+            best = phi;
+          }
+        }
+        return best;
+      }
+      const YAW_REST = 2.72; // tube seats in the rest clip
+      const YAW_OUTER = yawForRadius(1.27);
+      const YAW_INNER = yawForRadius(0.62);
+      const LIFT_UP = 0.055; // armLift.rotation.x — raised
+      const LIFT_DOWN = -0.0065; //                    — stylus in the groove
+      armYaw.rotation.y = YAW_REST;
+      armLift.rotation.x = LIFT_UP;
+
+      /* — controls on the deck — */
+      function knurledKnob(r = 0.14, h = 0.12) {
+        const g = new THREE.Group();
+        const body = new THREE.Mesh(
+          new THREE.CylinderGeometry(r, r * 1.04, h, 40),
+          M.blackMetal,
+        );
+        body.position.y = h / 2;
+        body.castShadow = true;
+        g.add(body);
+        const cap = new THREE.Mesh(
+          new THREE.CylinderGeometry(r * 0.78, r * 0.78, 0.012, 32),
+          M.steel,
+        );
+        cap.position.y = h + 0.005;
+        g.add(cap);
+        for (let i = 0; i < 24; i++) {
+          // knurling ribs
+          const rib = new THREE.Mesh(
+            new THREE.BoxGeometry(0.012, h * 0.8, 0.014),
+            M.blackPlastic,
+          );
+          const a = (i / 24) * Math.PI * 2;
+          rib.position.set(Math.cos(a) * r, h / 2, Math.sin(a) * r);
+          rib.rotation.y = -a;
+          g.add(rib);
+        }
+        const skirt = new THREE.Mesh(
+          new THREE.CylinderGeometry(r * 1.16, r * 1.22, 0.018, 40),
+          M.steel,
+        );
+        skirt.position.y = 0.009;
+        g.add(skirt);
+        const mark = new THREE.Mesh(
+          new THREE.BoxGeometry(0.014, 0.008, r * 0.55),
+          new THREE.MeshStandardMaterial({
+            color: "#e8ddc4",
+            roughness: 0.4,
+            emissive: "#7a6a48",
+            emissiveIntensity: 0.25,
+          }),
+        );
+        mark.position.set(0, h + 0.012, -r * 0.42);
+        g.add(mark);
+        return g;
+      }
+      const volKnob = knurledKnob();
+      volKnob.position.set(1.28, 0, 0.98);
+      player.add(volKnob);
+      const toneKnob = knurledKnob();
+      toneKnob.position.set(1.92, 0, 0.98);
+      player.add(toneKnob);
+
+      /* start/stop push button + LED in a chrome bezel */
+      const startBtn = new THREE.Group();
+      startBtn.position.set(1.94, 0, 0.3);
+      player.add(startBtn);
+      {
+        const collar = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.095, 0.1, 0.03, 32),
+          M.steel,
+        );
+        collar.position.y = 0.015;
+        startBtn.add(collar);
+        const cap = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.072, 0.078, 0.075, 32),
+          M.blackGloss,
+        );
+        cap.position.y = 0.062;
+        cap.castShadow = true;
+        cap.name = "startCap";
+        startBtn.add(cap);
+      }
+      const led = new THREE.Mesh(
+        new THREE.SphereGeometry(0.02, 14, 14),
+        new THREE.MeshStandardMaterial({
+          color: "#3a2408",
+          emissive: "#ff9a2a",
+          emissiveIntensity: 0,
+          roughness: 0.3,
+        }),
+      );
+      led.position.set(1.94, 0.012, 0.7);
+      led.scale.y = 0.5;
+      player.add(led);
+      {
+        const bezel = new THREE.Mesh(
+          new THREE.TorusGeometry(0.026, 0.007, 8, 20),
+          M.chrome,
+        );
+        bezel.rotation.x = Math.PI / 2;
+        bezel.position.set(1.94, 0.008, 0.7);
+        player.add(bezel);
+      }
+
+      /* speed selector knob (front-left) */
+      const speedKnob = new THREE.Group();
+      speedKnob.position.set(-1.58, 0, 1.1);
+      player.add(speedKnob);
+      {
+        const skirt = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.115, 0.125, 0.016, 32),
+          M.steel,
+        );
+        skirt.position.y = 0.008;
+        speedKnob.add(skirt);
+        const body = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.085, 0.095, 0.11, 32),
+          M.alu,
+        );
+        body.position.y = 0.055;
+        body.castShadow = true;
+        speedKnob.add(body);
+        const mark = new THREE.Mesh(
+          new THREE.BoxGeometry(0.012, 0.006, 0.07),
+          M.blackMetal,
+        );
+        mark.position.set(0, 0.113, -0.035);
+        speedKnob.add(mark);
+      }
+
+      /* silk-screened deck lettering (planes flush with the wood) */
+      function deckPrint(canvasEl, w, x, z, opts = {}) {
+        const t = ctex(canvasEl);
+        const h = (w * canvasEl.height) / canvasEl.width;
+        const m = new THREE.Mesh(
+          new THREE.PlaneGeometry(w, h),
+          new THREE.MeshBasicMaterial({
+            map: t,
+            transparent: true,
+            depthWrite: false,
+            opacity: opts.opacity ?? 1,
+          }),
+        );
+        m.rotation.x = -Math.PI / 2;
+        m.position.set(x, 0.003, z);
+        player.add(m);
+        return m;
+      }
+      deckPrint(texDeckPrint("VOLUME", ["MIN", "MAX"]), 0.62, 1.28, 0.93);
+      deckPrint(texDeckPrint("TONE", ["LO", "HI"]), 0.62, 1.92, 0.93);
+      deckPrint(
+        texDeckPrint("START / STOP", null, 640, 160),
+        0.56,
+        1.94,
+        0.555,
+      );
+      {
+        // 33 · 45 marks beside the speed knob
+        const c = cnv(160, 220),
+          x = c.getContext("2d");
+        x.fillStyle = "rgba(240,228,205,.92)";
+        x.textAlign = "center";
+        x.font = "600 52px Inter, sans-serif";
+        x.fillText("33", 80, 72);
+        x.fillText("45", 80, 168);
+        deckPrint(c, 0.14, -1.86, 1.1);
+      }
+      /* brass plaque on the front face */
+      {
+        const m = new THREE.Mesh(
+          new THREE.PlaneGeometry(1.5, 0.44),
+          new THREE.MeshStandardMaterial({
+            map: ctex(texPlaque()),
+            roughness: 0.5,
+            metalness: 0.35,
+          }),
+        );
+        m.position.set(0.12, -0.255, 1.684);
+        player.add(m);
+      }
+      /* tiny corner screws on the deck */
+      [
+        [-2.2, -1.5],
+        [2.2, -1.5],
+        [-2.2, 1.5],
+        [2.2, 1.5],
+      ].forEach(([sx, sz]) => {
+        const s = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.02, 0.02, 0.01, 12),
+          M.steel,
+        );
+        s.position.set(sx, 0.004, sz);
+        player.add(s);
+      });
+
+      /* dust motes drifting in the key light */
+      const motes = (() => {
+        const n = 140,
+          g = new THREE.BufferGeometry();
+        const pos = new Float32Array(n * 3),
+          seed = new Float32Array(n);
+        for (let i = 0; i < n; i++) {
+          pos[i * 3] = (Math.random() - 0.5) * 6;
+          pos[i * 3 + 1] = Math.random() * 2.6 - 0.4;
+          pos[i * 3 + 2] = (Math.random() - 0.5) * 4;
+          seed[i] = Math.random() * 100;
+        }
+        g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+        const p = new THREE.Points(
+          g,
+          new THREE.PointsMaterial({
+            color: "#fff2da",
+            size: 0.014,
+            transparent: true,
+            opacity: 0.4,
+            depthWrite: false,
+          }),
+        );
+        p.userData.seed = seed;
+        scene.add(p);
+        return p;
+      })();
+
+      /* ══════════════════════════════════════════════════════════════
+   5 · AUDIO ENGINE — Web Audio API
+   Each record is a generative composition synthesized live, so the
+   whole experience ships with zero audio files. Gain, tilt-EQ tone
+   control, crackle and playback-speed all run through real nodes.
+   ══════════════════════════════════════════════════════════════ */
+      const Audio = (() => {
+        let ctx = null,
+          master,
+          lowShelf,
+          highShelf,
+          comp,
+          crackleGain,
+          musicGain;
+        let crackleSrc = null;
+        const S = { volume: 0.75, tone: 0.5, speedFactor: 1, playing: false };
+
+        function ensure() {
+          if (ctx) return ctx;
+          ctx = new (window.AudioContext || window.webkitAudioContext)();
+          master = ctx.createGain();
+          master.gain.value = S.volume;
+          lowShelf = ctx.createBiquadFilter();
+          lowShelf.type = "lowshelf";
+          lowShelf.frequency.value = 280;
+          highShelf = ctx.createBiquadFilter();
+          highShelf.type = "highshelf";
+          highShelf.frequency.value = 2800;
+          comp = ctx.createDynamicsCompressor();
+          comp.threshold.value = -16;
+          comp.ratio.value = 3;
+          comp.knee.value = 18;
+          musicGain = ctx.createGain();
+          musicGain.gain.value = 0;
+          musicGain.connect(lowShelf);
+          lowShelf.connect(highShelf);
+          highShelf.connect(comp);
+          comp.connect(master);
+          master.connect(ctx.destination);
+          // vinyl crackle bed
+          crackleGain = ctx.createGain();
+          crackleGain.gain.value = 0;
+          const len = ctx.sampleRate * 3,
+            buf = ctx.createBuffer(1, len, ctx.sampleRate);
+          const d = buf.getChannelData(0);
+          for (let i = 0; i < len; i++) {
+            d[i] = (Math.random() * 2 - 1) * 0.028; // hiss
+            if (Math.random() < 0.0007) d[i] += (Math.random() * 2 - 1) * 0.85; // pops
+            if (Math.random() < 0.004) d[i] += (Math.random() * 2 - 1) * 0.22; // ticks
+          }
+          crackleSrc = ctx.createBufferSource();
+          crackleSrc.buffer = buf;
+          crackleSrc.loop = true;
+          const bp = ctx.createBiquadFilter();
+          bp.type = "bandpass";
+          bp.frequency.value = 3400;
+          bp.Q.value = 0.5;
+          crackleSrc.connect(bp);
+          bp.connect(crackleGain);
+          crackleGain.connect(master);
+          crackleSrc.start();
+          applyTone(S.tone);
+          return ctx;
+        }
+        const now = () => (ctx ? ctx.currentTime : 0);
+
+        /* ——— tiny instrument kit ——— */
+        const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
+        function env(g, t, a, peak, dec, sus = 0) {
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.exponentialRampToValueAtTime(peak, t + a);
+          g.gain.exponentialRampToValueAtTime(
+            Math.max(sus, 0.0001),
+            t + a + dec,
+          );
+        }
+        function pluck(
+          midi,
+          t,
+          {
+            type = "triangle",
+            peak = 0.16,
+            dec = 0.9,
+            cutoff = 2200,
+            detune = 0,
+          } = {},
+        ) {
+          const o = ctx.createOscillator(),
+            g = ctx.createGain(),
+            f = ctx.createBiquadFilter();
+          o.type = type;
+          o.frequency.value = mtof(midi);
+          o.detune.value = detune;
+          f.type = "lowpass";
+          f.frequency.setValueAtTime(cutoff, t);
+          f.frequency.exponentialRampToValueAtTime(
+            Math.max(cutoff * 0.25, 120),
+            t + dec,
+          );
+          env(g, t, 0.006, peak, dec);
+          o.connect(f);
+          f.connect(g);
+          g.connect(musicGain);
+          o.start(t);
+          o.stop(t + dec + 0.3);
+        }
+        function keys(midi, t, { peak = 0.11, dec = 1.6 } = {}) {
+          // e-piano: sine + soft overtone + tremolo
+          const g = ctx.createGain();
+          env(g, t, 0.008, peak, dec);
+          const tr = ctx.createGain();
+          tr.gain.value = 1;
+          const lfo = ctx.createOscillator();
+          lfo.frequency.value = 4.3;
+          const lg = ctx.createGain();
+          lg.gain.value = 0.14;
+          lfo.connect(lg);
+          lg.connect(tr.gain);
+          lfo.start(t);
+          lfo.stop(t + dec + 0.4);
+          [
+            [1, "sine", 1],
+            [2, "sine", 0.32],
+            [3.98, "sine", 0.07],
+          ].forEach(([mul, type, amt]) => {
+            const o = ctx.createOscillator();
+            o.type = type;
+            o.frequency.value = mtof(midi) * mul;
+            const og = ctx.createGain();
+            og.gain.value = amt;
+            o.connect(og);
+            og.connect(tr);
+            o.start(t);
+            o.stop(t + dec + 0.4);
+          });
+          tr.connect(g);
+          g.connect(musicGain);
+        }
+        function bass(
+          midi,
+          t,
+          { peak = 0.2, dec = 0.55, type = "triangle" } = {},
+        ) {
+          const o = ctx.createOscillator(),
+            g = ctx.createGain(),
+            f = ctx.createBiquadFilter();
+          o.type = type;
+          o.frequency.value = mtof(midi);
+          f.type = "lowpass";
+          f.frequency.value = 520;
+          env(g, t, 0.01, peak, dec, 0.001);
+          o.connect(f);
+          f.connect(g);
+          g.connect(musicGain);
+          o.start(t);
+          o.stop(t + dec + 0.25);
+        }
+        function pad(
+          midis,
+          t,
+          { peak = 0.05, att = 1.4, hold = 2.6, rel = 1.6, cutoff = 1200 } = {},
+        ) {
+          midis.forEach((mi) => {
+            [-6, 5].forEach((det) => {
+              const o = ctx.createOscillator(),
+                g = ctx.createGain(),
+                f = ctx.createBiquadFilter();
+              o.type = "sawtooth";
+              o.frequency.value = mtof(mi);
+              o.detune.value = det;
+              f.type = "lowpass";
+              f.frequency.value = cutoff;
+              f.Q.value = 0.4;
+              g.gain.setValueAtTime(0.0001, t);
+              g.gain.linearRampToValueAtTime(peak, t + att);
+              g.gain.setValueAtTime(peak, t + att + hold);
+              g.gain.linearRampToValueAtTime(0.0001, t + att + hold + rel);
+              o.connect(f);
+              f.connect(g);
+              g.connect(musicGain);
+              o.start(t);
+              o.stop(t + att + hold + rel + 0.1);
+            });
+          });
+        }
+        function noiseHit(
+          t,
+          { peak = 0.05, dec = 0.09, freq = 6800, q = 1.2 } = {},
+        ) {
+          // ride / hat / snare colouring
+          const len = ctx.sampleRate * 0.25,
+            b = ctx.createBuffer(1, len, ctx.sampleRate);
+          const d = b.getChannelData(0);
+          for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+          const s = ctx.createBufferSource();
+          s.buffer = b;
+          const f = ctx.createBiquadFilter();
+          f.type = "bandpass";
+          f.frequency.value = freq;
+          f.Q.value = q;
+          const g = ctx.createGain();
+          env(g, t, 0.002, peak, dec);
+          s.connect(f);
+          f.connect(g);
+          g.connect(musicGain);
+          s.start(t);
+          s.stop(t + dec + 0.15);
+        }
+        function kick(t, { peak = 0.22 } = {}) {
+          const o = ctx.createOscillator(),
+            g = ctx.createGain();
+          o.type = "sine";
+          o.frequency.setValueAtTime(120, t);
+          o.frequency.exponentialRampToValueAtTime(38, t + 0.11);
+          env(g, t, 0.003, peak, 0.24);
+          o.connect(g);
+          g.connect(musicGain);
+          o.start(t);
+          o.stop(t + 0.4);
+        }
+        function horn(midi, t, { peak = 0.07, dec = 1.1 } = {}) {
+          // muted-trumpet-ish lead
+          const o = ctx.createOscillator(),
+            g = ctx.createGain(),
+            f = ctx.createBiquadFilter();
+          o.type = "sawtooth";
+          o.frequency.value = mtof(midi);
+          const vib = ctx.createOscillator();
+          vib.frequency.value = 5.2;
+          const vg = ctx.createGain();
+          vg.gain.value = 4;
+          vib.connect(vg);
+          vg.connect(o.frequency);
+          vib.start(t);
+          vib.stop(t + dec + 0.3);
+          f.type = "bandpass";
+          f.frequency.value = 920;
+          f.Q.value = 1.6;
+          env(g, t, 0.06, peak, dec);
+          o.connect(f);
+          f.connect(g);
+          g.connect(musicGain);
+          o.start(t);
+          o.stop(t + dec + 0.3);
+        }
+
+        /* ——— generative composer, one grammar per record ——— */
+        // chord degrees on a root: [semitone offsets]
+        const CH = {
+          m7: [0, 3, 7, 10],
+          M7: [0, 4, 7, 11],
+          d7: [0, 4, 7, 10],
+          m9: [0, 3, 7, 10, 14],
+          M9: [0, 4, 7, 11, 14],
+          sus: [0, 5, 7, 10],
+          m6: [0, 3, 7, 9],
+        };
+        const PROGS = {
+          jazz: [
+            ["m9", 0],
+            ["m9", 0],
+            ["m7", 5],
+            ["d7", 10],
+            ["m9", 0],
+            ["m6", -4],
+            ["m7", 5],
+            ["d7", 7],
+          ],
+          ambient: [
+            ["M9", 0],
+            ["m9", 9],
+            ["M7", 5],
+            ["sus", 7],
+          ],
+          piano: [
+            ["M7", 0],
+            ["m7", 9],
+            ["M7", 5],
+            ["sus", 7],
+            ["M7", 0],
+            ["m7", 4],
+            ["m7", 9],
+            ["sus", 7],
+          ],
+          synth: [
+            ["m9", 0],
+            ["m9", 0],
+            ["M7", 8],
+            ["sus", 10],
+          ],
+          folk: [
+            ["M7", 0],
+            ["M7", 5],
+            ["m7", 9],
+            ["sus", 7],
+          ],
+          lofi: [
+            ["m9", 0],
+            ["M9", 3],
+            ["m9", 8],
+            ["d7", 10],
+          ],
+        };
+        const seq = { album: null, step: 0, nextT: 0, timer: null };
+        const SPB = () => 60 / (seq.album.bpm * S.speedFactor) / 4; // seconds per 16th
+
+        function chordAt(bar) {
+          const prog = PROGS[seq.album.style];
+          const [kind, off] = prog[bar % prog.length];
+          return CH[kind].map((s) => seq.album.root + off + s);
+        }
+        function scheduleStep(step, t) {
+          const a = seq.album,
+            bar = (step / 16) | 0,
+            s16 = step % 16,
+            ch = chordAt(bar);
+          const R = Math.random;
+          switch (a.style) {
+            case "jazz": {
+              const swing = s16 % 4 === 2 ? SPB() * 0.32 : 0;
+              if (s16 % 4 === 0)
+                noiseHit(t, { peak: 0.045, freq: 7200, dec: 0.16 }); // ride
+              if (s16 % 4 === 2)
+                noiseHit(t + swing, { peak: 0.028, freq: 8600, dec: 0.07 }); // swung skip
+              if (s16 % 4 === 0) {
+                // walking bass
+                const opts = [
+                  ch[0] - 12,
+                  ch[1] - 12,
+                  ch[2] - 12,
+                  ch[0] - 10,
+                  ch[3] - 12,
+                ];
+                bass(opts[(R() * opts.length) | 0], t, {
+                  peak: 0.17,
+                  dec: 0.5,
+                });
+              }
+              if (s16 === 0 && bar % 2 === 0)
+                ch.slice(1).forEach((m, i) =>
+                  keys(m, t + i * 0.012, { peak: 0.05, dec: 1.9 }),
+                );
+              if (s16 === 8 && R() < 0.65) {
+                // horn phrase
+                const lick = [ch[3] + 12, ch[2] + 12, ch[1] + 12, ch[3] + 10];
+                lick
+                  .slice(0, 2 + ((R() * 3) | 0))
+                  .forEach((m, i) =>
+                    horn(m, t + i * SPB() * 2, { peak: 0.055, dec: 0.7 }),
+                  );
+              }
+              break;
+            }
+            case "ambient": {
+              if (s16 === 0)
+                pad(
+                  ch.map((m) => m - 0),
+                  t,
+                  { peak: 0.055, att: 2.2, hold: 3.4, rel: 2.4, cutoff: 900 },
+                );
+              if (s16 === 0)
+                bass(ch[0] - 24, t, { peak: 0.1, dec: 3.2, type: "sine" });
+              if (s16 % 8 === 4 && R() < 0.55)
+                keys(ch[(R() * ch.length) | 0] + 24, t, {
+                  peak: 0.035,
+                  dec: 3,
+                });
+              break;
+            }
+            case "piano": {
+              const arp = [0, 2, 1, 3, 2, 4 % ch.length, 1, 2];
+              if (s16 % 2 === 0)
+                pluck(ch[arp[(s16 / 2) % 8]], t, {
+                  type: "sine",
+                  peak: 0.1,
+                  dec: 1.5,
+                  cutoff: 3000,
+                });
+              if (s16 === 0)
+                bass(ch[0] - 12, t, { peak: 0.09, dec: 1.8, type: "sine" });
+              if (s16 === 0 && bar % 2 === 1)
+                keys(ch[3] + 12, t, { peak: 0.05, dec: 2.4 });
+              break;
+            }
+            case "synth": {
+              if (s16 % 2 === 0)
+                bass(ch[0] - 12 + (s16 % 8 === 6 ? 7 : 0), t, {
+                  peak: 0.16,
+                  dec: 0.22,
+                  type: "square",
+                });
+              if (s16 % 4 === 2)
+                noiseHit(t, { peak: 0.03, freq: 9000, dec: 0.05 });
+              if (s16 % 8 === 4)
+                noiseHit(t, { peak: 0.05, freq: 2400, q: 0.8, dec: 0.14 });
+              if (s16 === 0)
+                pad(ch, t, {
+                  peak: 0.04,
+                  att: 0.8,
+                  hold: 2.4,
+                  rel: 1.4,
+                  cutoff: 1500,
+                });
+              if (s16 === 0 && bar % 4 === 0) kick(t, { peak: 0.16 });
+              break;
+            }
+            case "folk": {
+              const strum = [0, 1, 2, 3, 2, 1];
+              if (s16 % 2 === 0)
+                pluck(ch[strum[(s16 / 2) % 6]], t + R() * 0.012, {
+                  type: "triangle",
+                  peak: 0.11,
+                  dec: 1.1,
+                  cutoff: 2600,
+                });
+              if (s16 === 0) bass(ch[0] - 12, t, { peak: 0.12, dec: 0.9 });
+              if (s16 === 8) bass(ch[2] - 12, t, { peak: 0.09, dec: 0.8 });
+              break;
+            }
+            case "lofi": {
+              if (s16 === 0 || s16 === 10) kick(t, { peak: 0.2 });
+              if (s16 === 4 || s16 === 12)
+                noiseHit(t, { peak: 0.07, freq: 1900, q: 0.9, dec: 0.13 });
+              if (s16 % 2 === 0)
+                noiseHit(t + (s16 % 4 === 2 ? SPB() * 0.4 : 0), {
+                  peak: 0.018,
+                  freq: 8200,
+                  dec: 0.04,
+                });
+              if (s16 === 0)
+                ch.forEach((m, i) =>
+                  keys(m, t + i * 0.02, { peak: 0.055, dec: 2.2 }),
+                );
+              if (s16 === 14 && R() < 0.4)
+                keys(ch[3] + 12, t, { peak: 0.04, dec: 1.4 });
+              break;
+            }
+          }
+        }
+        function pump() {
+          if (!S.playing || !seq.album) return;
+          const horizon = now() + 0.14;
+          while (seq.nextT < horizon) {
+            scheduleStep(seq.step, seq.nextT);
+            seq.nextT += SPB();
+            seq.step++;
+          }
+        }
+        return {
+          ensure,
+          play(album) {
+            ensure();
+            if (ctx.state === "suspended") ctx.resume();
+            seq.album = album;
+            seq.step = 0;
+            seq.nextT = now() + 0.06;
+            S.playing = true;
+            clearInterval(seq.timer);
+            seq.timer = setInterval(pump, 30);
+            musicGain.gain.cancelScheduledValues(now());
+            musicGain.gain.setTargetAtTime(1, now(), 0.5);
+            crackleGain.gain.setTargetAtTime(0.55, now(), 0.4);
+          },
+          stop(fast = false) {
+            S.playing = false;
+            clearInterval(seq.timer);
+            if (!ctx) return;
+            const k = fast ? 0.12 : 0.5;
+            musicGain.gain.setTargetAtTime(0, now(), k);
+            crackleGain.gain.setTargetAtTime(0, now(), k * 1.4);
+          },
+          setVolume(v) {
+            S.volume = v;
+            if (ctx) master.gain.setTargetAtTime(v * v, now(), 0.05);
+          },
+          setTone(v) {
+            S.tone = v;
+            if (ctx) applyTone(v);
+          },
+          setSpeed(f) {
+            S.speedFactor = f;
+          },
+          seekRestart() {
+            if (S.playing && seq.album) {
+              seq.step = 0;
+              seq.nextT = now() + 0.05;
+            }
+          },
+          get playing() {
+            return S.playing;
+          },
+          state: S,
+        };
+        function applyTone(v) {
+          const t = (v - 0.5) * 2; // −1 … +1
+          lowShelf.gain.setTargetAtTime(-t * 7, now(), 0.05);
+          highShelf.gain.setTargetAtTime(t * 8, now(), 0.05);
+        }
+      })();
+
+      /* ══════════════════════════════════════════════════════════════
+   6 · TRANSPORT — motor physics, tonearm choreography, track clock
+   ══════════════════════════════════════════════════════════════ */
+      const T = {
+        albumIdx: 0,
+        state: "stopped", // stopped | cueing | playing | parking | swapping
+        omega: 0, // rad/s (actual)
+        rpm: 100 / 3, // 33⅓ or 45
+        motorOn: false,
+        time: 0, // track position, seconds
+        wow: 0,
+      };
+      const rpmToOmega = (rpm) => (rpm / 60) * Math.PI * 2;
+      const album = () => ALBUMS[T.albumIdx];
+
+      const armTL = {
+        tl: null,
+        kill() {
+          if (this.tl) {
+            this.tl.kill();
+            this.tl = null;
+          }
+          gsap.killTweensOf(armYaw.rotation);
+          gsap.killTweensOf(armLift.rotation);
+          gsap.killTweensOf(cueLever.rotation);
+        },
+      };
+
+      function cueAndPlay() {
+        if (
+          T.state === "playing" ||
+          T.state === "cueing" ||
+          T.state === "swapping"
+        )
+          return;
+        Audio.ensure();
+        T.state = "cueing";
+        T.motorOn = true;
+        armTL.kill();
+        const tl = gsap.timeline({
+          onComplete() {
+            T.state = "playing";
+            Audio.play(album());
+          },
+        });
+        armTL.tl = tl;
+        tl.to(
+          cueLever.rotation,
+          { x: 0.55, duration: 0.3, ease: "power2.out" },
+          0,
+        )
+          .to(
+            armLift.rotation,
+            { x: LIFT_UP, duration: 0.5, ease: "power2.inOut" },
+            0,
+          )
+          .to(
+            armYaw.rotation,
+            {
+              y: yawForProgress(T.time / album().dur),
+              duration: 1.15,
+              ease: "power2.inOut",
+            },
+            0.25,
+          )
+          .to(
+            cueLever.rotation,
+            { x: 0, duration: 0.85, ease: "power2.inOut" },
+            1.35,
+          )
+          .to(
+            armLift.rotation,
+            { x: LIFT_DOWN, duration: 0.85, ease: "power3.in" },
+            1.35,
+          );
+        setPlayUI(true);
+      }
+      function parkAndStop() {
+        if (T.state === "stopped" || T.state === "parking") return;
+        T.state = "parking";
+        Audio.stop();
+        armTL.kill();
+        const tl = gsap.timeline({
+          onComplete() {
+            T.state = "stopped";
+          },
+        });
+        armTL.tl = tl;
+        tl.to(
+          cueLever.rotation,
+          { x: 0.55, duration: 0.35, ease: "power2.out" },
+          0,
+        )
+          .to(
+            armLift.rotation,
+            { x: LIFT_UP, duration: 0.55, ease: "power2.out" },
+            0,
+          )
+          .to(
+            armYaw.rotation,
+            { y: YAW_REST, duration: 1.2, ease: "power2.inOut" },
+            0.35,
+          )
+          .add(() => {
+            T.motorOn = false;
+          }, 0.5);
+        setPlayUI(false);
+      }
+      function yawForProgress(p) {
+        // stylus tracks inward across the side
+        return (
+          YAW_OUTER + (YAW_INNER - YAW_OUTER) * THREE.MathUtils.clamp(p, 0, 1)
+        );
+      }
+
+      /* — album switching: full mechanical swap — */
+      function loadAlbum(i, force = false) {
+        i = (i + ALBUMS.length) % ALBUMS.length;
+        if (i === T.albumIdx) {
+          if (force && T.state === "stopped") cueAndPlay();
+          return;
+        }
+        const wasPlaying =
+          force || T.state === "playing" || T.state === "cueing";
+        T.albumIdx = i;
+        T.time = 0;
+        const a = album();
+        updateNowPlaying(a);
+        markActiveCard(a.id);
+        Audio.stop(true);
+        T.state = "swapping";
+        armTL.kill();
+        gsap.killTweensOf(recordGroup.position);
+        gsap.killTweensOf(recordGroup.rotation);
+        const tl = gsap.timeline({
+          onComplete() {
+            T.state = "stopped";
+            if (wasPlaying) cueAndPlay();
+            else setPlayUI(false);
+          },
+        });
+        armTL.tl = tl;
+        tl.to(
+          cueLever.rotation,
+          { x: 0.55, duration: 0.3, ease: "power2.out" },
+          0,
+        )
+          .to(
+            armLift.rotation,
+            { x: LIFT_UP, duration: 0.45, ease: "power2.out" },
+            0,
+          )
+          .to(
+            armYaw.rotation,
+            { y: YAW_REST, duration: 0.9, ease: "power2.inOut" },
+            0.2,
+          )
+          .add(() => {
+            T.motorOn = false;
+          }, 0.25)
+          // old record lifts off the spindle…
+          .to(
+            recordGroup.position,
+            { y: 1.15, duration: 0.7, ease: "power2.in" },
+            0.55,
+          )
+          .to(
+            recordGroup.rotation,
+            { z: 0.1, duration: 0.7, ease: "power1.in" },
+            0.55,
+          )
+          .add(() => {
+            labelMat.map = ctex(makeLabel(a));
+            labelMat.needsUpdate = true;
+          }, 1.3)
+          // …new record drops with a tiny bounce
+          .to(
+            recordGroup.rotation,
+            { z: 0, duration: 0.55, ease: "power1.out" },
+            1.35,
+          )
+          .to(
+            recordGroup.position,
+            { y: 0, duration: 0.75, ease: "bounce.out" },
+            1.4,
+          );
+      }
+      function setPlayUI(playing) {
+        document.getElementById("iconPlay").style.display = playing
+          ? "none"
+          : "block";
+        document.getElementById("iconPause").style.display = playing
+          ? "block"
+          : "none";
+        document
+          .getElementById("playBtn")
+          .setAttribute("aria-label", playing ? "Pause" : "Play");
+      }
+
+      /* ══════════════════════════════════════════════════════════════
+   7 · INTERACTION — drag-rotate, 3D knobs, buttons, camera
+   ══════════════════════════════════════════════════════════════ */
+      const raycaster = new THREE.Raycaster(),
+        pointer = new THREE.Vector2();
+      const pickables = [volKnob, toneKnob, startBtn, speedKnob];
+      const drag = {
+        mode: null,
+        x: 0,
+        y: 0,
+        vx: 0,
+        targetY: 0,
+        targetX: 0,
+        knob: null,
+        startVal: 0,
+      };
+      drag.targetY = player.rotation.y;
+      const HOME_Y = 0,
+        HOME_X = 0;
+      const mouse = { x: 0, y: 0 };
+      const reduceMotion = matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      function pick(e) {
+        const r = canvas.getBoundingClientRect();
+        pointer.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+        pointer.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+        raycaster.setFromCamera(pointer, camera);
+        const hits = raycaster.intersectObjects(pickables, true);
+        if (!hits.length) return null;
+        let o = hits[0].object;
+        while (o.parent) {
+          if (o === volKnob) return { kind: "vol", obj: volKnob };
+          if (o === toneKnob) return { kind: "tone", obj: toneKnob };
+          if (o === startBtn) return { kind: "start", obj: startBtn };
+          if (o === speedKnob) return { kind: "speed", obj: speedKnob };
+          o = o.parent;
+        }
+        return null;
+      }
+      canvas.addEventListener("pointerdown", (e) => {
+        canvas.setPointerCapture(e.pointerId);
+        const hit = pick(e);
+        drag.x = e.clientX;
+        drag.y = e.clientY;
+        drag.vx = 0;
+        if (hit && (hit.kind === "vol" || hit.kind === "tone")) {
+          drag.mode = "knob";
+          drag.knob = hit.kind;
+          drag.startVal =
+            hit.kind === "vol" ? Audio.state.volume : Audio.state.tone;
+          canvas.classList.add("knob");
+        } else if (hit && hit.kind === "start") {
+          drag.mode = "press";
+          pressStartButton();
+        } else if (hit && hit.kind === "speed") {
+          drag.mode = "press";
+          setSpeed(T.rpm > 40 ? 33 : 45);
+        } else {
+          drag.mode = "orbit";
+          canvas.classList.add("grabbing");
+          document.getElementById("dragHint").classList.add("hide");
+        }
+      });
+      canvas.addEventListener("pointermove", (e) => {
+        mouse.x = (e.clientX / innerWidth) * 2 - 1;
+        mouse.y = (e.clientY / innerHeight) * 2 - 1;
+        if (drag.mode === "orbit") {
+          const dx = e.clientX - drag.x,
+            dy = e.clientY - drag.y;
+          drag.targetY += dx * 0.006;
+          drag.vx = dx * 0.006;
+          drag.targetX = THREE.MathUtils.clamp(
+            drag.targetX + dy * 0.002,
+            -0.1,
+            0.16,
+          );
+          drag.x = e.clientX;
+          drag.y = e.clientY;
+        } else if (drag.mode === "knob") {
+          const dy = drag.y - e.clientY;
+          const v = THREE.MathUtils.clamp(drag.startVal + dy * 0.006, 0, 1);
+          if (drag.knob === "vol") {
+            Audio.setVolume(v);
+            syncVolUI(v);
+            volKnob.rotation.y = -(v - 0.5) * 4.2;
+          } else {
+            Audio.setTone(v);
+            toneKnob.rotation.y = -(v - 0.5) * 4.2;
+          }
+        } else if (drag.mode !== "press") {
+          canvas.classList.toggle("press", !!pick(e));
+        }
+      });
+      addEventListener("pointerup", () => {
+        drag.mode = null;
+        drag.knob = null;
+        canvas.classList.remove("grabbing", "knob");
+      });
+      drag.targetY = HOME_Y;
+      drag.targetX = HOME_X;
+
+      function pressStartButton() {
+        const cap = startBtn.getObjectByName("startCap");
+        gsap
+          .timeline()
+          .to(cap.position, { y: 0.045, duration: 0.08, ease: "power2.in" })
+          .to(cap.position, { y: 0.062, duration: 0.22, ease: "power2.out" });
+        if (T.state === "playing" || T.state === "cueing") parkAndStop();
+        else cueAndPlay();
+      }
+      function setSpeed(rpm) {
+        T.rpm = rpm === 45 ? 45 : 100 / 3;
+        Audio.setSpeed(T.rpm / (100 / 3));
+        gsap.to(speedKnob.rotation, {
+          y: rpm === 45 ? -0.9 : 0,
+          duration: 0.35,
+          ease: "back.out(2)",
+        });
+        document
+          .querySelectorAll(".speed-btn")
+          .forEach((b) =>
+            b.setAttribute(
+              "aria-pressed",
+              String((rpm === 45) === (b.dataset.speed === "45")),
+            ),
+          );
+      }
+      document
+        .querySelectorAll(".speed-btn")
+        .forEach((b) =>
+          b.addEventListener("click", () =>
+            setSpeed(+b.dataset.speed === 45 ? 45 : 33),
+          ),
+        );
+
+      document.getElementById("rotateBtn").addEventListener("click", () => {
+        if (drag.spinning) return;
+        drag.spinning = true;
+        drag.targetY = HOME_Y;
+        drag.targetX = HOME_X;
+        drag.vx = 0;
+        gsap.fromTo(
+          player.rotation,
+          { y: player.rotation.y },
+          {
+            y: HOME_Y + Math.PI * 2,
+            duration: 1.4,
+            ease: "power3.inOut",
+            onComplete() {
+              player.rotation.y = HOME_Y;
+              drag.spinning = false;
+            },
+          },
+        );
+      });
+
+      /* ══════════════════════════════════════════════════════════════
+   8 · UI — carousel, player bar, seek, volume
+   ══════════════════════════════════════════════════════════════ */
+      const fmt = (s) => {
+        s = Math.max(0, s | 0);
+        return (
+          String((s / 60) | 0).padStart(2, "0") +
+          ":" +
+          String(s % 60).padStart(2, "0")
+        );
+      };
+
+      function updateNowPlaying(a) {
+        document.getElementById("nowTitle").textContent = a.title;
+        document.getElementById("nowArtist").textContent = a.artist;
+        document.getElementById("timeDur").textContent = fmt(a.dur);
+        const art = document.getElementById("nowArt");
+        art.innerHTML = "";
+        art.appendChild(makeCover(a, 92));
+      }
+      function markActiveCard(id) {
+        document
+          .querySelectorAll(".album")
+          .forEach((el) => el.classList.toggle("active", el.dataset.id === id));
+      }
+      /* build the carousel */
+      {
+        const rail = document.getElementById("carousel");
+        ALBUMS.forEach((a, i) => {
+          const b = document.createElement("button");
+          b.className = "album";
+          b.dataset.id = a.id;
+          b.setAttribute("aria-label", `Play ${a.title} by ${a.artist}`);
+          b.style.setProperty("--disc-accent", a.label);
+          const vis = document.createElement("div");
+          vis.className = "album-visual";
+          const disc = document.createElement("div");
+          disc.className = "album-disc";
+          const cover = document.createElement("div");
+          cover.className = "album-cover";
+          cover.appendChild(makeCover(a, 420));
+          vis.append(disc, cover);
+          const name = document.createElement("div");
+          name.className = "album-name";
+          name.textContent = a.title;
+          const art = document.createElement("div");
+          art.className = "album-artist";
+          art.textContent = a.artist;
+          b.append(vis, name, art);
+          b.addEventListener("click", () => loadAlbum(i, true));
+          rail.appendChild(b);
+        });
+        const step = () => rail.clientWidth * 0.7;
+        document
+          .getElementById("carPrev")
+          .addEventListener("click", () => rail.scrollBy({ left: -step() }));
+        document
+          .getElementById("carNext")
+          .addEventListener("click", () => rail.scrollBy({ left: step() }));
+      }
+      /* transport buttons */
+      document.getElementById("playBtn").addEventListener("click", () => {
+        if (T.state === "playing" || T.state === "cueing") parkAndStop();
+        else cueAndPlay();
+      });
+      document
+        .getElementById("prevBtn")
+        .addEventListener("click", () => loadAlbum(T.albumIdx - 1, false));
+      document
+        .getElementById("nextBtn")
+        .addEventListener("click", () => loadAlbum(T.albumIdx + 1));
+      addEventListener("keydown", (e) => {
+        if (e.target.matches("input,textarea")) return;
+        if (e.code === "Space") {
+          e.preventDefault();
+          document.getElementById("playBtn").click();
+        }
+        if (e.code === "ArrowRight" && e.shiftKey) loadAlbum(T.albumIdx + 1);
+        if (e.code === "ArrowLeft" && e.shiftKey) loadAlbum(T.albumIdx - 1);
+      });
+
+      /* seek */
+      const seekEl = document.getElementById("seek");
+      function seekTo(clientX) {
+        const r = seekEl.getBoundingClientRect();
+        const p = THREE.MathUtils.clamp((clientX - r.left) / r.width, 0, 1);
+        T.time = p * album().dur;
+        Audio.seekRestart();
+        document.getElementById("seekFill").style.width = p * 100 + "%";
+        document.getElementById("seekDot").style.left = p * 100 + "%";
+      }
+      seekEl.addEventListener("pointerdown", (e) => {
+        seekTo(e.clientX);
+        const mv = (ev) => seekTo(ev.clientX);
+        const up = () => {
+          removeEventListener("pointermove", mv);
+          removeEventListener("pointerup", up);
+        };
+        addEventListener("pointermove", mv);
+        addEventListener("pointerup", up);
+      });
+      seekEl.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") {
+          T.time = Math.min(T.time + 10, album().dur);
+        }
+        if (e.key === "ArrowLeft") {
+          T.time = Math.max(T.time - 10, 0);
+        }
+      });
+
+      /* volume slider ↔ knob sync */
+      const volEl = document.getElementById("vol");
+      function syncVolUI(v) {
+        document.getElementById("volFill").style.width = v * 100 + "%";
+        document.getElementById("volDot").style.left = v * 100 + "%";
+        volEl.setAttribute("aria-valuenow", Math.round(v * 100));
+      }
+      function volTo(clientX) {
+        const r = volEl.getBoundingClientRect();
+        const v = THREE.MathUtils.clamp((clientX - r.left) / r.width, 0, 1);
+        Audio.setVolume(v);
+        syncVolUI(v);
+        volKnob.rotation.y = -(v - 0.5) * 4.2;
+      }
+      volEl.addEventListener("pointerdown", (e) => {
+        volTo(e.clientX);
+        const mv = (ev) => volTo(ev.clientX);
+        const up = () => {
+          removeEventListener("pointermove", mv);
+          removeEventListener("pointerup", up);
+        };
+        addEventListener("pointermove", mv);
+        addEventListener("pointerup", up);
+      });
+      volEl.addEventListener("keydown", (e) => {
+        let v = Audio.state.volume;
+        if (e.key === "ArrowRight") v = Math.min(1, v + 0.05);
+        if (e.key === "ArrowLeft") v = Math.max(0, v - 0.05);
+        Audio.setVolume(v);
+        syncVolUI(v);
+        volKnob.rotation.y = -(v - 0.5) * 4.2;
+      });
+      volKnob.rotation.y = -(0.75 - 0.5) * 4.2;
+
+      /* ══════════════════════════════════════════════════════════════
+   9 · FRAME LOOP
+   ══════════════════════════════════════════════════════════════ */
+      const clock = new THREE.Clock();
+      let elapsed = 0;
+      function tick() {
+        const dt = Math.min(clock.getDelta(), 0.05);
+        elapsed += dt;
+
+        /* motor with inertia: accelerates hard, coasts down slow */
+        const target = T.motorOn ? rpmToOmega(T.rpm) : 0;
+        const k = T.motorOn ? 2.6 : 0.9;
+        T.omega += (target - T.omega) * Math.min(1, k * dt);
+        if (!T.motorOn && T.omega < 0.02) T.omega = 0;
+        spin.rotation.y -= T.omega * dt;
+
+        /* track clock + stylus tracking */
+        if (T.state === "playing") {
+          T.time += dt * (T.rpm / (100 / 3));
+          if (T.time >= album().dur) {
+            loadAlbum(T.albumIdx + 1, true);
+          } else {
+            armYaw.rotation.y = yawForProgress(T.time / album().dur);
+            // microscopic stylus oscillation while in the groove
+            armLift.rotation.x =
+              LIFT_DOWN +
+              Math.sin(elapsed * 41) * 0.0016 +
+              Math.sin(elapsed * 7.3) * 0.0011;
+            const p = T.time / album().dur;
+            document.getElementById("seekFill").style.width = p * 100 + "%";
+            document.getElementById("seekDot").style.left = p * 100 + "%";
+            seekEl.setAttribute("aria-valuenow", Math.round(p * 100));
+          }
+        }
+        document.getElementById("timeCur").textContent = fmt(T.time);
+        led.material.emissiveIntensity +=
+          ((T.motorOn ? 2.6 : 0) - led.material.emissiveIntensity) *
+          Math.min(1, 8 * dt);
+
+        /* drag-to-rotate with momentum + damping */
+        if (drag.mode !== "orbit" && Math.abs(drag.vx) > 0.0004) {
+          drag.targetY += drag.vx;
+          drag.vx *= 0.94;
+        }
+        drag.targetY = THREE.MathUtils.clamp(drag.targetY, -1.15, 1.15);
+        if (!drag.spinning)
+          player.rotation.y +=
+            (drag.targetY - player.rotation.y) * Math.min(1, 7 * dt);
+        player.rotation.x +=
+          (drag.targetX - player.rotation.x) * Math.min(1, 7 * dt);
+
+        /* idle float + mouse parallax on the camera */
+        if (!reduceMotion) {
+          const fy = Math.sin(elapsed * 0.5) * 0.03,
+            fx = Math.cos(elapsed * 0.37) * 0.02;
+          camera.position.x = camHome.x + fx + mouse.x * 0.14;
+          camera.position.y = camHome.y + fy - mouse.y * 0.08;
+          camera.lookAt(0, 0.05, 0);
+          const p = motes.geometry.attributes.position,
+            seed = motes.userData.seed;
+          for (let i = 0; i < seed.length; i++) {
+            p.setY(i, p.getY(i) + Math.sin(elapsed * 0.6 + seed[i]) * 0.0006);
+            p.setX(i, p.getX(i) + Math.cos(elapsed * 0.4 + seed[i]) * 0.0004);
+          }
+          p.needsUpdate = true;
+        }
+
+        renderer.render(scene, camera);
+        requestAnimationFrame(tick);
+      }
+
+      /* resize + adaptive DPR */
+      function resize() {
+        const w = canvas.clientWidth,
+          h = canvas.clientHeight;
+        renderer.setSize(w, h, false);
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        camera.aspect = w / h;
+        camera.fov = w < 720 ? 40 : 32;
+        camera.updateProjectionMatrix();
+      }
+      addEventListener("resize", resize);
+
+      /* ══════════════════════════════════════════════════════════════
+   10 · BOOT
+   ══════════════════════════════════════════════════════════════ */
+      labelMat.map = ctex(makeLabel(album()));
+      labelMat.needsUpdate = true;
+      updateNowPlaying(album());
+      markActiveCard(album().id);
+      setPlayUI(false);
+      resize();
+      requestAnimationFrame(tick);
+      document.fonts?.ready.then(() => {
+        // redraw text-bearing art once fonts land
+        labelMat.map = ctex(makeLabel(album()));
+        labelMat.needsUpdate = true;
+        updateNowPlaying(album());
+        document.querySelectorAll(".album-cover").forEach((el, i) => {
+          el.innerHTML = "";
+          el.appendChild(makeCover(ALBUMS[i], 420));
+        });
+      });
+      setTimeout(
+        () => document.getElementById("loader").classList.add("done"),
+        650,
+      );
+    </script>
+  </body>
+</html>
