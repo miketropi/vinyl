@@ -3071,19 +3071,27 @@
             // clean up previous
             if (source) { try { source.disconnect(); } catch(e){} source = null; }
             if (audioEl) { audioEl.pause(); audioEl = null; }
-            // create audio element and connect through Web Audio
-            audioEl = new AudioEl(album.audio);
-            console.log("🎵 Loading:", "/" + album.audio);
+            // create audio element — play directly (bypass Web Audio for CORS safety)
+            audioEl = new AudioEl();
+            audioEl.crossOrigin = "anonymous";
+            audioEl.src = album.audio;
+            console.log("🎵 Loading:", album.audio);
             audioEl.oncanplaythrough = () => console.log("✅ Audio loaded OK");
             audioEl.onerror = (e) => console.error("❌ Audio load error:", e);
             audioEl.loop = false;
             audioEl.playbackRate = S.speedFactor;
             audioEl.currentTime = 0;
+            audioEl.volume = S.volume;
             trackDur = album.dur;
-            source = ctx.createMediaElementSource(audioEl);
-            source.connect(lowShelf);
-            // Ensure volume is correct
-            master.gain.setTargetAtTime(S.volume * S.volume, now(), 0.02);
+            // Try Web Audio routing via MediaElementSource (needs CORS on CDN)
+            try {
+              source = ctx.createMediaElementSource(audioEl);
+              source.connect(lowShelf);
+              audioEl._webAudio = true;
+            } catch (e) {
+              console.warn("Web Audio routing blocked by CORS, using direct playback");
+              audioEl._webAudio = false;
+            }
             audioEl.addEventListener("ended", () => {
               S.playing = false;
               crackleGain.gain.setTargetAtTime(0, now(), 0.5);
@@ -3123,6 +3131,7 @@
           setVolume(v) {
             S.volume = v;
             if (ctx) master.gain.setTargetAtTime(v * v, now(), 0.05);
+            if (audioEl) audioEl.volume = v;
           },
           setTone(v) {
             S.tone = v;
