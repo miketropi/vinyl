@@ -1283,7 +1283,7 @@
           title: "Em Của Ngày Hôm Qua",
           artist: "Sơn Tùng M-TP",
           dur: 232,
-          audio: "audio/em-cua-ngay-hom-qua.mp3",
+          audio: "https://pub-0645c3b9d3674132af6b362484df0f3c.r2.dev/music-demo/em-cua-ngay-hom-qua.mp3",
           label: "#c0392b",
           labelInk: "#f5e6d3",
           style: "pop",
@@ -1296,7 +1296,7 @@
           title: "Nơi Này Có Anh",
           artist: "Sơn Tùng M-TP",
           dur: 261,
-          audio: "audio/noi-nay-co-anh.mp3",
+          audio: "https://pub-0645c3b9d3674132af6b362484df0f3c.r2.dev/music-demo/noi-nay-co-anh.mp3",
           label: "#2c3e50",
           labelInk: "#ecf0f1",
           style: "pop",
@@ -1309,7 +1309,7 @@
           title: "Chúng Ta Không Thuộc Về Nhau",
           artist: "Sơn Tùng M-TP",
           dur: 266,
-          audio: "audio/chung-ta-khong-thuoc-ve-nhau.mp3",
+          audio: "https://pub-0645c3b9d3674132af6b362484df0f3c.r2.dev/music-demo/chung-ta-khong-thuoc-ve-nhau.mp3",
           label: "#8e44ad",
           labelInk: "#f3e5f5",
           style: "pop",
@@ -1322,7 +1322,7 @@
           title: "Lạc Trôi",
           artist: "Sơn Tùng M-TP",
           dur: 242,
-          audio: "audio/lac-troi.mp3",
+          audio: "https://pub-0645c3b9d3674132af6b362484df0f3c.r2.dev/music-demo/lac-troi.mp3",
           label: "#16a085",
           labelInk: "#e8f8f5",
           style: "pop",
@@ -1335,7 +1335,7 @@
           title: "Chạy Ngay Đi",
           artist: "Sơn Tùng M-TP",
           dur: 202,
-          audio: "audio/chay-ngay-di.mp3",
+          audio: "https://pub-0645c3b9d3674132af6b362484df0f3c.r2.dev/music-demo/chay-ngay-di.mp3",
           label: "#1a1a2e",
           labelInk: "#e94560",
           style: "pop",
@@ -1348,7 +1348,7 @@
           title: "Muộn Rồi Mà Sao Còn",
           artist: "Sơn Tùng M-TP",
           dur: 239,
-          audio: "audio/muon-roi-ma-sao-con.mp3",
+          audio: "https://pub-0645c3b9d3674132af6b362484df0f3c.r2.dev/music-demo/muon-roi-ma-sao-con.mp3",
           label: "#e67e22",
           labelInk: "#2c1810",
           style: "pop",
@@ -3072,7 +3072,7 @@
             if (source) { try { source.disconnect(); } catch(e){} source = null; }
             if (audioEl) { audioEl.pause(); audioEl = null; }
             // create audio element and connect through Web Audio
-            audioEl = new AudioEl("/" + album.audio);
+            audioEl = new AudioEl(album.audio);
             console.log("🎵 Loading:", "/" + album.audio);
             audioEl.oncanplaythrough = () => console.log("✅ Audio loaded OK");
             audioEl.onerror = (e) => console.error("❌ Audio load error:", e);
