@@ -905,6 +905,153 @@
           transform: rotate(360deg);
         }
       }
+
+      /* ============================================================
+   LIKE BUBBLE + MODAL
+   ============================================================ */
+      .like-bubble {
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        z-index: 100;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #e94560, #c0392b);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 6px 20px rgba(233, 69, 96, 0.35);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: float 3s ease-in-out infinite;
+      }
+      .like-bubble:hover {
+        transform: scale(1.12);
+        box-shadow: 0 10px 28px rgba(233, 69, 96, 0.5);
+      }
+      .like-bubble:active { transform: scale(0.94); }
+      .like-bubble svg {
+        width: 28px;
+        height: 28px;
+        fill: #fff;
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+      }
+      /* pulse ring */
+      .like-bubble::before {
+        content: "";
+        position: absolute;
+        inset: -8px;
+        border-radius: 50%;
+        border: 2px solid rgba(233, 69, 96, 0.3);
+        animation: pulse-ring 2.2s ease-out infinite;
+      }
+      @keyframes pulse-ring {
+        0% { transform: scale(1); opacity: 0.7; }
+        100% { transform: scale(1.5); opacity: 0; }
+      }
+
+      /* modal overlay */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        background: rgba(20, 14, 8, 0.65);
+        backdrop-filter: blur(6px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.35s ease;
+      }
+      .modal-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-card {
+        background: linear-gradient(180deg, #fbf5e9 0%, #f4ead6 100%);
+        border: 1px solid #e3d5b8;
+        border-radius: 22px;
+        padding: 36px 32px 28px;
+        max-width: 420px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(60, 30, 10, 0.4);
+        transform: translateY(24px) scale(0.94);
+        transition: transform 0.4s cubic-bezier(0.34, 1.3, 0.5, 1);
+      }
+      .modal-overlay.open .modal-card {
+        transform: translateY(0) scale(1);
+      }
+      .modal-heart {
+        font-size: 52px;
+        margin-bottom: 14px;
+        animation: heart-beat 1.2s ease-in-out infinite;
+      }
+      @keyframes heart-beat {
+        0%, 100% { transform: scale(1); }
+        15% { transform: scale(1.2); }
+        30% { transform: scale(1); }
+        45% { transform: scale(1.16); }
+        60% { transform: scale(1); }
+      }
+      .modal-msg {
+        font-family: var(--serif);
+        font-size: 21px;
+        font-weight: 600;
+        color: var(--ink);
+        line-height: 1.5;
+        margin-bottom: 22px;
+      }
+      .modal-fb {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(180deg, #1877f2, #0d5dc4);
+        color: #fff;
+        text-decoration: none;
+        padding: 13px 28px;
+        border-radius: 999px;
+        font-family: var(--sans);
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        box-shadow: 0 6px 18px rgba(24, 119, 242, 0.35);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+      }
+      .modal-fb:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 26px rgba(24, 119, 242, 0.5);
+      }
+      .modal-fb svg {
+        width: 22px;
+        height: 22px;
+        fill: #fff;
+      }
+      .modal-close {
+        position: absolute;
+        top: 14px;
+        right: 18px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(0,0,0,0.06);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        border: none;
+        font-size: 18px;
+        color: var(--ink-soft);
+        transition: background 0.2s;
+      }
+      .modal-close:hover { background: rgba(0,0,0,0.12); }
+
     </style>
   </head>
   <body>
@@ -998,8 +1145,8 @@
       <div class="now">
         <div class="now-art" id="nowArt"></div>
         <div class="now-meta">
-          <div class="now-title" id="nowTitle">Kind of Blue</div>
-          <div class="now-artist" id="nowArtist">Miles Davis</div>
+          <div class="now-title" id="nowTitle">Em Của Ngày Hôm Qua</div>
+          <div class="now-artist" id="nowArtist">Sơn Tùng M-TP</div>
         </div>
       </div>
       <div class="transport">
@@ -1097,6 +1244,24 @@
       </div>
     </section>
 
+    <!-- ============ LIKE BUBBLE ============ -->
+    <button class="like-bubble" id="likeBubble" aria-label="Like & Follow">
+      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    </button>
+
+    <!-- ============ LIKE MODAL ============ -->
+    <div class="modal-overlay" id="likeModal" role="dialog" aria-modal="true" aria-label="Like & Follow">
+      <div class="modal-card" style="position:relative">
+        <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+        <div class="modal-heart">💛</div>
+        <p class="modal-msg">like &amp; follow để xem những thứ hay ho mỗi ngày nha nha nha!</p>
+        <a class="modal-fb" href="https://www.facebook.com/profile.php?id=100068020483283" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+          Theo dõi Facebook
+        </a>
+      </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script type="importmap">
       {
@@ -1114,76 +1279,82 @@
    ══════════════════════════════════════════════════════════════ */
       const ALBUMS = [
         {
-          id: "kob",
-          title: "Kind of Blue",
-          artist: "Miles Davis",
-          dur: 562,
-          label: "#b06c2f",
-          labelInk: "#2a1c0c",
-          style: "jazz",
-          bpm: 126,
-          root: 50,
-          cover: coverKindOfBlue,
+          id: "emcua",
+          title: "Em Của Ngày Hôm Qua",
+          artist: "Sơn Tùng M-TP",
+          dur: 232,
+          audio: "audio/em-cua-ngay-hom-qua.mp3",
+          label: "#c0392b",
+          labelInk: "#f5e6d3",
+          style: "pop",
+          bpm: 128,
+          root: 56,
+          cover: coverEmCuaNgayHomQua,
         },
         {
-          id: "dawn",
-          title: "Dawn Chorus",
-          artist: "Leila Reyes",
-          dur: 341,
-          label: "#c8834a",
-          labelInk: "#3a2410",
-          style: "ambient",
-          bpm: 66,
+          id: "noinay",
+          title: "Nơi Này Có Anh",
+          artist: "Sơn Tùng M-TP",
+          dur: 261,
+          audio: "audio/noi-nay-co-anh.mp3",
+          label: "#2c3e50",
+          labelInk: "#ecf0f1",
+          style: "pop",
+          bpm: 100,
+          root: 53,
+          cover: coverNoiNayCoAnh,
+        },
+        {
+          id: "chungta",
+          title: "Chúng Ta Không Thuộc Về Nhau",
+          artist: "Sơn Tùng M-TP",
+          dur: 266,
+          audio: "audio/chung-ta-khong-thuoc-ve-nhau.mp3",
+          label: "#8e44ad",
+          labelInk: "#f3e5f5",
+          style: "pop",
+          bpm: 92,
+          root: 55,
+          cover: coverChungTa,
+        },
+        {
+          id: "lactroi",
+          title: "Lạc Trôi",
+          artist: "Sơn Tùng M-TP",
+          dur: 242,
+          audio: "audio/lac-troi.mp3",
+          label: "#16a085",
+          labelInk: "#e8f8f5",
+          style: "pop",
+          bpm: 105,
+          root: 54,
+          cover: coverLacTroi,
+        },
+        {
+          id: "chayngay",
+          title: "Chạy Ngay Đi",
+          artist: "Sơn Tùng M-TP",
+          dur: 202,
+          audio: "audio/chay-ngay-di.mp3",
+          label: "#1a1a2e",
+          labelInk: "#e94560",
+          style: "pop",
+          bpm: 115,
           root: 52,
-          cover: coverDawnChorus,
+          cover: coverChayNgayDi,
         },
         {
-          id: "north",
-          title: "Northern Lights",
-          artist: "Ólafur Haukur",
-          dur: 388,
-          label: "#8a9b83",
-          labelInk: "#1f2a1e",
-          style: "piano",
-          bpm: 72,
-          root: 57,
-          cover: coverNorthernLights,
-        },
-        {
-          id: "mid",
-          title: "Midnight Drive",
-          artist: "Theo Kane",
-          dur: 296,
-          label: "#1c1a17",
-          labelInk: "#c9a25e",
-          style: "synth",
-          bpm: 96,
-          root: 45,
-          cover: coverMidnightDrive,
-        },
-        {
-          id: "river",
-          title: "River Runs Deep",
-          artist: "Sarah James",
-          dur: 314,
-          label: "#e9dfc8",
-          labelInk: "#2b251c",
-          style: "folk",
-          bpm: 84,
-          root: 48,
-          cover: coverRiverRunsDeep,
-        },
-        {
-          id: "red",
-          title: "Echoes in Red",
-          artist: "Marcus Elliot",
-          dur: 329,
-          label: "#8e2f22",
-          labelInk: "#f2d9b8",
-          style: "lofi",
-          bpm: 78,
-          root: 46,
-          cover: coverEchoesInRed,
+          id: "muonroi",
+          title: "Muộn Rồi Mà Sao Còn",
+          artist: "Sơn Tùng M-TP",
+          dur: 239,
+          audio: "audio/muon-roi-ma-sao-con.mp3",
+          label: "#e67e22",
+          labelInk: "#2c1810",
+          style: "pop",
+          bpm: 110,
+          root: 58,
+          cover: coverMuonRoiMaSaoCon,
         },
       ];
 
@@ -1213,415 +1384,276 @@
         x.restore();
       }
 
-      /* — Kind of Blue: near-black indigo, abstract musician silhouette, blue title — */
-      function coverKindOfBlue(x, s) {
-        const g = x.createLinearGradient(0, 0, s, s);
-        g.addColorStop(0, "#10151d");
-        g.addColorStop(0.55, "#0b0e13");
-        g.addColorStop(1, "#05070a");
+      /* — Em Của Ngày Hôm Qua: crimson rose-gold romantic gradient — */
+      function coverEmCuaNgayHomQua(x, s) {
+        const g = x.createLinearGradient(0, 0, s, s * 0.8);
+        g.addColorStop(0, "#c0392b");
+        g.addColorStop(0.4, "#e74c3c");
+        g.addColorStop(0.7, "#f39c12");
+        g.addColorStop(1, "#1a0505");
         x.fillStyle = g;
         x.fillRect(0, 0, s, s);
-        // dim smoky glow left
-        const r = x.createRadialGradient(
-          s * 0.28,
-          s * 0.55,
-          0,
-          s * 0.28,
-          s * 0.55,
-          s * 0.7,
-        );
-        r.addColorStop(0, "rgba(60,80,110,.34)");
-        r.addColorStop(1, "rgba(0,0,0,0)");
-        x.fillStyle = r;
+        // dark vignette
+        const v = x.createRadialGradient(s/2, s*0.55, s*0.25, s/2, s*0.55, s*0.85);
+        v.addColorStop(0, "rgba(0,0,0,0)");
+        v.addColorStop(1, "rgba(0,0,0,0.65)");
+        x.fillStyle = v;
         x.fillRect(0, 0, s, s);
-        // silhouette: head + shoulders, trumpet raised
-        x.fillStyle = "#04060a";
-        x.beginPath();
-        x.moveTo(s * 0.1, s);
-        x.bezierCurveTo(
-          s * 0.12,
-          s * 0.72,
-          s * 0.16,
-          s * 0.6,
-          s * 0.24,
-          s * 0.55,
-        ); // shoulder up
-        x.bezierCurveTo(
-          s * 0.26,
-          s * 0.42,
-          s * 0.24,
-          s * 0.34,
-          s * 0.3,
-          s * 0.3,
-        ); // neck→head back
-        x.bezierCurveTo(
-          s * 0.33,
-          s * 0.22,
-          s * 0.44,
-          s * 0.22,
-          s * 0.47,
-          s * 0.3,
-        ); // crown
-        x.bezierCurveTo(
-          s * 0.5,
-          s * 0.36,
-          s * 0.49,
-          s * 0.42,
-          s * 0.46,
-          s * 0.46,
-        ); // face
-        x.bezierCurveTo(
-          s * 0.52,
-          s * 0.5,
-          s * 0.58,
-          s * 0.58,
-          s * 0.6,
-          s * 0.66,
-        ); // arm out
-        x.bezierCurveTo(s * 0.55, s * 0.78, s * 0.48, s * 0.9, s * 0.46, s);
-        x.closePath();
-        x.fill();
-        // rim light on profile
-        x.strokeStyle = "rgba(120,160,210,.5)";
-        x.lineWidth = s * 0.006;
-        x.beginPath();
-        x.moveTo(s * 0.3, s * 0.3);
-        x.bezierCurveTo(
-          s * 0.33,
-          s * 0.22,
-          s * 0.44,
-          s * 0.22,
-          s * 0.47,
-          s * 0.3,
-        );
-        x.bezierCurveTo(
-          s * 0.5,
-          s * 0.36,
-          s * 0.49,
-          s * 0.42,
-          s * 0.46,
-          s * 0.46,
-        );
-        x.stroke();
-        // trumpet hint
-        x.strokeStyle = "rgba(200,170,110,.75)";
-        x.lineWidth = s * 0.012;
+        // heart beat line (ECG style)
+        x.strokeStyle = "rgba(255, 200, 150, 0.85)";
+        x.lineWidth = s * 0.005;
         x.lineCap = "round";
+        x.lineJoin = "round";
         x.beginPath();
-        x.moveTo(s * 0.47, s * 0.44);
-        x.lineTo(s * 0.62, s * 0.52);
+        for (let t = 0; t <= 1; t += 0.004) {
+          const py = s*0.52 + Math.sin(t*14)*0.01 + (t>0.3&&t<0.5 ? Math.sin(t*38)*0.11 : 0);
+          x.lineTo(t*s, py*s + s*0.05);
+        }
         x.stroke();
+        // glow line
+        x.strokeStyle = "rgba(255, 180, 130, 0.3)";
+        x.lineWidth = s * 0.014;
         x.beginPath();
-        x.arc(s * 0.645, s * 0.532, s * 0.028, 0, 7);
-        x.strokeStyle = "rgba(200,170,110,.55)";
+        for (let t = 0; t <= 1; t += 0.004) {
+          const py = s*0.52 + Math.sin(t*14)*0.01 + (t>0.3&&t<0.5 ? Math.sin(t*38)*0.11 : 0);
+          x.lineTo(t*s, py*s + s*0.05);
+        }
         x.stroke();
         // title
-        x.textAlign = "left";
-        x.font = `600 ${s * 0.085}px Inter, sans-serif`;
-        x.fillStyle = "#e8eef6";
-        x.fillText("KIND OF", s * 0.6, s * 0.2);
-        x.fillStyle = "#4d84c9";
-        x.font = `600 ${s * 0.115}px Inter, sans-serif`;
-        const word = "BLUE";
-        let cx = s * 0.6;
-        for (const ch of word) {
-          x.fillText(ch, cx, s * 0.315);
-          cx += x.measureText(ch).width + s * 0.028;
-        }
-        x.font = `500 ${s * 0.037}px Inter, sans-serif`;
-        x.fillStyle = "#93a6bd";
-        x.fillText("MILES DAVIS", s * 0.6, s * 0.385);
-        grain(x, 20);
-      }
-
-      /* — Dawn Chorus: warm gradient sky, nested arches — */
-      function coverDawnChorus(x, s) {
-        const g = x.createLinearGradient(0, 0, 0, s);
-        g.addColorStop(0, "#e8b46a");
-        g.addColorStop(0.5, "#d18a4c");
-        g.addColorStop(1, "#a35a33");
-        x.fillStyle = g;
-        x.fillRect(0, 0, s, s);
-        const arch = (w, h, col) => {
-          x.fillStyle = col;
-          x.beginPath();
-          x.moveTo(s / 2 - w / 2, s * 0.92);
-          x.lineTo(s / 2 - w / 2, s * 0.92 - h + w / 2);
-          x.arc(s / 2, s * 0.92 - h + w / 2, w / 2, Math.PI, 0);
-          x.lineTo(s / 2 + w / 2, s * 0.92);
-          x.closePath();
-          x.fill();
-        };
-        arch(s * 0.62, s * 0.6, "#b96f3d");
-        arch(s * 0.48, s * 0.5, "#8f4a2c");
-        arch(s * 0.34, s * 0.4, "#e8c07c");
-        arch(s * 0.2, s * 0.3, "#6e3520");
-        // sun
-        x.fillStyle = "rgba(250,225,170,.9)";
-        x.beginPath();
-        x.arc(s / 2, s * 0.53, s * 0.045, 0, 7);
-        x.fill();
         x.textAlign = "center";
-        x.fillStyle = "#f7e6c8";
-        x.font = `500 ${s * 0.075}px 'Cormorant Garamond', serif`;
-        x.letterSpacing = s * 0.02 + "px";
-        x.fillText("DAWN", s / 2, s * 0.135);
-        x.fillText("CHORUS", s / 2, s * 0.215);
-        x.letterSpacing = "0px";
-        x.font = `500 ${s * 0.032}px Inter, sans-serif`;
-        x.fillStyle = "rgba(247,230,200,.8)";
-        x.fillText("LEILA REYES", s / 2, s * 0.27);
+        x.fillStyle = "#f5e6d3";
+        x.font = `600 ${s*0.068}px Inter, sans-serif`;
+        x.fillText("EM CỦA", s/2, s*0.29);
+        x.fillText("NGÀY HÔM QUA", s/2, s*0.375);
+        x.fillStyle = "#e6b377";
+        x.font = `500 ${s*0.035}px Inter, sans-serif`;
+        x.fillText("SƠN TÙNG M-TP", s/2, s*0.44);
         grain(x);
       }
 
-      /* — Northern Lights: pale nordic landscape — */
-      function coverNorthernLights(x, s) {
-        const g = x.createLinearGradient(0, 0, 0, s);
-        g.addColorStop(0, "#dfe6d8");
-        g.addColorStop(0.55, "#c3d0bd");
-        g.addColorStop(1, "#9db29b");
+      /* — Nơi Này Có Anh: deep navy constellation night sky — */
+      function coverNoiNayCoAnh(x, s) {
+        const g = x.createRadialGradient(s*0.3, s*0.35, 0, s/2, s*0.5, s*0.9);
+        g.addColorStop(0, "#1a2639");
+        g.addColorStop(0.5, "#0d1520");
+        g.addColorStop(1, "#050810");
         x.fillStyle = g;
         x.fillRect(0, 0, s, s);
-        // faint aurora band
-        x.save();
-        x.globalAlpha = 0.3;
-        const a = x.createLinearGradient(0, s * 0.18, s, s * 0.34);
-        a.addColorStop(0, "rgba(140,190,160,0)");
-        a.addColorStop(0.5, "rgba(150,200,180,.8)");
-        a.addColorStop(1, "rgba(140,190,160,0)");
-        x.fillStyle = a;
-        x.beginPath();
-        x.moveTo(0, s * 0.3);
-        x.bezierCurveTo(s * 0.3, s * 0.2, s * 0.7, s * 0.34, s, s * 0.22);
-        x.lineTo(s, s * 0.34);
-        x.bezierCurveTo(s * 0.7, s * 0.46, s * 0.3, s * 0.32, 0, s * 0.42);
-        x.closePath();
-        x.fill();
-        x.restore();
-        // mountains, three planes
-        const ridge = (y, amp, col) => {
-          x.fillStyle = col;
+        // stars
+        x.fillStyle = "#ecf0f1";
+        for (let i = 0; i < 90; i++) {
+          const sx = Math.random()*s, sy = Math.random()*s*0.7;
+          const r = Math.random()*s*0.005 + s*0.002;
+          x.globalAlpha = 0.3 + Math.random()*0.7;
           x.beginPath();
-          x.moveTo(0, s);
-          x.lineTo(0, y);
-          for (let i = 0; i <= 8; i++) {
-            const px = (i / 8) * s,
-              py = y + Math.sin(i * 2.1 + amp) * amp - (i % 3 ? amp * 0.4 : 0);
-            x.lineTo(px, py);
-          }
-          x.lineTo(s, s);
+          x.arc(sx, sy, r, 0, 7);
+          x.fill();
+        }
+        // larger constellation dots connected
+        const pts = [
+          [0.22,0.18],[0.31,0.24],[0.38,0.19],[0.44,0.28],
+          [0.52,0.15],[0.62,0.22],[0.72,0.18],[0.68,0.32],
+          [0.58,0.38],[0.48,0.42],[0.36,0.46],[0.25,0.38]
+        ];
+        x.strokeStyle = "rgba(255,255,255,0.15)";
+        x.lineWidth = s*0.002;
+        x.beginPath();
+        pts.forEach(([px,py],i) => {
+          const [cx,cy]=[px*s,py*s];
+          i===0 ? x.moveTo(cx,cy) : x.lineTo(cx,cy);
+        });
+        x.stroke();
+        pts.forEach(([px,py]) => {
+          x.fillStyle = "rgba(255,255,255,0.8)";
+          x.beginPath();
+          x.arc(px*s, py*s, s*0.007, 0, 7);
+          x.fill();
+        });
+        x.globalAlpha = 1;
+        x.textAlign = "center";
+        x.fillStyle = "#ecf0f1";
+        x.font = `600 ${s*0.065}px Inter, sans-serif`;
+        x.fillText("NƠI NÀY", s/2, s*0.72);
+        x.fillText("CÓ ANH", s/2, s*0.81);
+        x.font = `500 ${s*0.035}px Inter, sans-serif`;
+        x.fillStyle = "#7f8c8d";
+        x.fillText("SƠN TÙNG M-TP", s/2, s*0.88);
+        grain(x);
+      }
+
+      /* — Chúng Ta Không Thuộc Về Nhau: dramatic purple shattered geometry — */
+      function coverChungTa(x, s) {
+        const g = x.createLinearGradient(0, 0, s, s);
+        g.addColorStop(0, "#4a0e4e");
+        g.addColorStop(0.45, "#8e44ad");
+        g.addColorStop(1, "#2c0033");
+        x.fillStyle = g;
+        x.fillRect(0, 0, s, s);
+        // fractured polygon shards
+        x.globalAlpha = 0.35;
+        const cx = s/2, cy = s*0.45;
+        for (let i = 0; i < 18; i++) {
+          const a0 = Math.random()*7, a1 = a0 + 0.3 + Math.random()*0.8;
+          const r0 = s*0.08 + Math.random()*s*0.3, r1 = s*0.1 + Math.random()*s*0.4;
+          const shade = Math.random() > 0.5 ? "#f3e5f5" : "#d7bde2";
+          x.fillStyle = shade;
+          x.beginPath();
+          x.moveTo(cx+Math.cos(a0)*r0, cy+Math.sin(a0)*r0);
+          x.lineTo(cx+Math.cos(a1)*r1, cy+Math.sin(a1)*r1);
+          x.lineTo(cx+Math.cos((a0+a1)/2)*s*0.18, cy+Math.sin((a0+a1)/2)*s*0.18);
           x.closePath();
           x.fill();
-        };
-        ridge(s * 0.52, s * 0.05, "#7f927e");
-        ridge(s * 0.62, s * 0.07, "#5d705f");
-        ridge(s * 0.76, s * 0.045, "#43533f");
-        // water strip
-        x.fillStyle = "#b9c9b4";
-        x.fillRect(0, s * 0.88, s, s * 0.12);
-        x.textAlign = "left";
-        x.fillStyle = "#2c3a2c";
-        x.font = `600 ${s * 0.062}px Inter, sans-serif`;
-        x.fillText("NORTHERN LIGHTS", s * 0.07, s * 0.13);
-        x.font = `500 ${s * 0.032}px Inter, sans-serif`;
-        x.fillStyle = "#4c5c4a";
-        x.fillText("ÓLAFUR HAUKUR", s * 0.07, s * 0.185);
-        grain(x);
+        }
+        x.globalAlpha = 1;
+        // light burst from center
+        const b = x.createRadialGradient(cx, cy, 0, cx, cy, s*0.5);
+        b.addColorStop(0, "rgba(255,255,255,0.2)");
+        b.addColorStop(1, "rgba(0,0,0,0)");
+        x.fillStyle = b;
+        x.fillRect(0, 0, s, s);
+        x.textAlign = "center";
+        x.fillStyle = "#f3e5f5";
+        x.font = `600 ${s*0.048}px Inter, sans-serif`;
+        x.fillText("CHÚNG TA", s/2, s*0.82);
+        x.fillText("KHÔNG THUỘC VỀ NHAU", s/2, s*0.89);
+        x.font = `500 ${s*0.032}px Inter, sans-serif`;
+        x.fillStyle = "#d7bde2";
+        x.fillText("SƠN TÙNG M-TP", s/2, s*0.95);
+        grain(x, 18);
       }
 
-      /* — Midnight Drive: black field, gold scribbled circle — */
-      function coverMidnightDrive(x, s) {
-        const g = x.createRadialGradient(
-          s / 2,
-          s * 0.6,
-          0,
-          s / 2,
-          s * 0.6,
-          s * 0.8,
-        );
-        g.addColorStop(0, "#191713");
-        g.addColorStop(1, "#0b0a08");
+      /* — Lạc Trôi: ethereal emerald-teal water with gold — */
+      function coverLacTroi(x, s) {
+        const g = x.createLinearGradient(0, 0, 0, s);
+        g.addColorStop(0, "#0a3d3a");
+        g.addColorStop(0.4, "#16a085");
+        g.addColorStop(0.7, "#0d5c50");
+        g.addColorStop(1, "#071f1c");
         x.fillStyle = g;
         x.fillRect(0, 0, s, s);
-        // scribbled ring — many noisy circle passes
-        x.strokeStyle = "rgba(201,162,94,.5)";
-        x.lineWidth = s * 0.0035;
-        x.lineCap = "round";
-        const cx0 = s / 2,
-          cy0 = s * 0.6,
-          R = s * 0.26;
-        for (let p = 0; p < 14; p++) {
+        // flowing wave curves
+        x.save();
+        x.globalAlpha = 0.25;
+        for (let w = 0; w < 8; w++) {
+          x.strokeStyle = w%2===0 ? "rgba(255,215,0,0.4)" : "rgba(255,255,255,0.15)";
+          x.lineWidth = s*0.003 + w*s*0.002;
           x.beginPath();
-          const wob = Math.random() * s * 0.02 + s * 0.004,
-            ph = Math.random() * 7;
-          for (let a = 0; a <= Math.PI * 2.15; a += 0.05) {
-            const rr =
-              R +
-              Math.sin(a * 3 + ph) * wob +
-              (Math.random() - 0.5) * s * 0.006;
-            const px = cx0 + Math.cos(a) * rr,
-              py = cy0 + Math.sin(a) * rr * 0.96;
-            a === 0 ? x.moveTo(px, py) : x.lineTo(px, py);
+          for (let t = 0; t <= 1; t += 0.01) {
+            const py = s*0.3 + Math.sin(t*8 + w*0.9) * s*0.06 + w*s*0.06;
+            x.lineTo(t*s, py);
           }
-          x.globalAlpha = 0.25 + Math.random() * 0.4;
           x.stroke();
+        }
+        x.restore();
+        // gold particles floating up
+        x.fillStyle = "rgba(255,215,0,0.7)";
+        for (let i = 0; i < 45; i++) {
+          const px = Math.random()*s, py = Math.random()*s;
+          x.globalAlpha = 0.2 + Math.random()*0.5;
+          x.beginPath();
+          x.arc(px, py, s*0.003 + Math.random()*s*0.006, 0, 7);
+          x.fill();
         }
         x.globalAlpha = 1;
         x.textAlign = "center";
-        x.fillStyle = "#e9dcc2";
-        x.font = `600 ${s * 0.058}px Inter, sans-serif`;
-        x.fillText("MIDNIGHT DRIVE", s / 2, s * 0.14);
-        x.font = `500 ${s * 0.03}px Inter, sans-serif`;
-        x.fillStyle = "#8d7f63";
-        x.fillText("THEO KANE", s / 2, s * 0.195);
-        grain(x, 24);
-      }
-
-      /* — River Runs Deep: cream paper, ink tree — */
-      function coverRiverRunsDeep(x, s) {
-        x.fillStyle = "#ece3cd";
-        x.fillRect(0, 0, s, s);
-        const p = x.createLinearGradient(0, 0, 0, s);
-        p.addColorStop(0, "rgba(255,250,238,.6)");
-        p.addColorStop(1, "rgba(190,175,140,.25)");
-        x.fillStyle = p;
-        x.fillRect(0, 0, s, s);
-        // recursive ink tree
-        x.strokeStyle = "#20211c";
-        x.lineCap = "round";
-        function branch(bx, by, ang, len, w, depth) {
-          if (depth <= 0 || len < s * 0.012) return;
-          const ex = bx + Math.cos(ang) * len,
-            ey = by + Math.sin(ang) * len;
-          x.lineWidth = w;
-          x.beginPath();
-          x.moveTo(bx, by);
-          x.lineTo(ex, ey);
-          x.stroke();
-          const n = depth > 5 ? 2 : Math.random() > 0.3 ? 2 : 3;
-          for (let i = 0; i < n; i++)
-            branch(
-              ex,
-              ey,
-              ang + (Math.random() - 0.5) * 1.15,
-              len * (0.62 + Math.random() * 0.2),
-              w * 0.62,
-              depth - 1,
-            );
-        }
-        branch(s * 0.5, s * 0.8, -Math.PI / 2, s * 0.17, s * 0.017, 8);
-        // ground line + reflection
-        x.lineWidth = s * 0.004;
-        x.beginPath();
-        x.moveTo(s * 0.2, s * 0.805);
-        x.lineTo(s * 0.8, s * 0.805);
-        x.stroke();
-        x.save();
-        x.globalAlpha = 0.14;
-        x.translate(0, s * 1.615);
-        x.scale(1, -1);
-        branch(s * 0.5, s * 0.8, -Math.PI / 2, s * 0.14, s * 0.014, 6);
-        x.restore();
-        x.textAlign = "center";
-        x.fillStyle = "#2b2a24";
-        x.font = `600 ${s * 0.056}px Inter, sans-serif`;
-        x.fillText("RIVER RUNS DEEP", s / 2, s * 0.905);
-        x.font = `500 ${s * 0.03}px Inter, sans-serif`;
-        x.fillStyle = "#6d6a5c";
-        x.fillText("SARAH JAMES", s / 2, s * 0.955);
+        x.fillStyle = "rgba(255,215,0,0.9)";
+        x.font = `700 ${s*0.09}px Inter, sans-serif`;
+        x.fillText("LẠC TRÔI", s/2, s*0.68);
+        x.font = `500 ${s*0.035}px Inter, sans-serif`;
+        x.fillStyle = "#a3d9c8";
+        x.fillText("SƠN TÙNG M-TP", s/2, s*0.76);
         grain(x);
       }
 
-      /* — Echoes in Red: deep red, dark profile — */
-      function coverEchoesInRed(x, s) {
-        const g = x.createLinearGradient(0, 0, s, s);
-        g.addColorStop(0, "#9c3325");
-        g.addColorStop(0.6, "#7d251a");
-        g.addColorStop(1, "#571710");
-        x.fillStyle = g;
+      /* — Chạy Ngay Đi: dark neon-red intensity — */
+      function coverChayNgayDi(x, s) {
+        x.fillStyle = "#0a0a0e";
         x.fillRect(0, 0, s, s);
-        // profile silhouette facing left
-        x.fillStyle = "#3a0f0a";
-        x.beginPath();
-        x.moveTo(s * 0.3, s);
-        x.lineTo(s * 0.32, s * 0.62); // neck front
-        x.bezierCurveTo(
-          s * 0.27,
-          s * 0.58,
-          s * 0.28,
-          s * 0.52,
-          s * 0.31,
-          s * 0.5,
-        ); // chin
-        x.bezierCurveTo(
-          s * 0.28,
-          s * 0.485,
-          s * 0.285,
-          s * 0.455,
-          s * 0.315,
-          s * 0.45,
-        ); // lips
-        x.bezierCurveTo(
-          s * 0.29,
-          s * 0.42,
-          s * 0.3,
-          s * 0.385,
-          s * 0.335,
-          s * 0.375,
-        ); // nose
-        x.bezierCurveTo(
-          s * 0.325,
-          s * 0.33,
-          s * 0.35,
-          s * 0.26,
-          s * 0.43,
-          s * 0.235,
-        ); // brow→forehead
-        x.bezierCurveTo(
-          s * 0.56,
-          s * 0.2,
-          s * 0.66,
-          s * 0.28,
-          s * 0.665,
-          s * 0.42,
-        ); // crown/back hair
-        x.bezierCurveTo(s * 0.67, s * 0.58, s * 0.62, s * 0.7, s * 0.6, s);
-        x.closePath();
-        x.fill();
-        // warm rim on face edge
-        x.strokeStyle = "rgba(240,170,120,.35)";
-        x.lineWidth = s * 0.006;
-        x.beginPath();
-        x.moveTo(s * 0.31, s * 0.5);
-        x.bezierCurveTo(
-          s * 0.28,
-          s * 0.485,
-          s * 0.285,
-          s * 0.455,
-          s * 0.315,
-          s * 0.45,
-        );
-        x.bezierCurveTo(
-          s * 0.29,
-          s * 0.42,
-          s * 0.3,
-          s * 0.385,
-          s * 0.335,
-          s * 0.375,
-        );
-        x.stroke();
+        // neon red diagonal slashes
+        for (let i = 0; i < 6; i++) {
+          const y0 = s*0.1 + i*s*0.14;
+          const grad = x.createLinearGradient(0, y0, s, y0+s*0.08);
+          grad.addColorStop(0, "rgba(233,69,96,0)");
+          grad.addColorStop(0.45, "rgba(233,69,96,0.35)");
+          grad.addColorStop(0.55, "rgba(233,69,96,0.35)");
+          grad.addColorStop(1, "rgba(233,69,96,0)");
+          x.fillStyle = grad;
+          x.fillRect(0, y0, s, s*0.08);
+        }
+        // speed lines
+        x.strokeStyle = "rgba(233,69,96,0.3)";
+        x.lineWidth = s*0.002;
+        for (let i = 0; i < 40; i++) {
+          const sy = Math.random()*s;
+          x.beginPath();
+          x.moveTo(Math.random()*s*0.3, sy);
+          x.lineTo(s*0.3 + Math.random()*s*0.7, sy + (Math.random()-0.5)*s*0.03);
+          x.stroke();
+        }
+        // center glow
+        const g0 = x.createRadialGradient(s*0.42, s*0.48, 0, s*0.42, s*0.48, s*0.35);
+        g0.addColorStop(0, "rgba(233,69,96,0.2)");
+        g0.addColorStop(1, "rgba(0,0,0,0)");
+        x.fillStyle = g0;
+        x.fillRect(0, 0, s, s);
         x.textAlign = "right";
-        x.font = `600 ${s * 0.062}px Inter, sans-serif`;
-        x.fillStyle = "rgba(240,210,170,.42)";
-        x.fillText("ECHOES", s * 0.93, s * 0.145);
-        x.fillText("IN RED", s * 0.93, s * 0.225);
-        x.font = `500 ${s * 0.028}px Inter, sans-serif`;
-        x.fillStyle = "rgba(240,210,170,.5)";
-        x.fillText("MARCUS ELLIOT", s * 0.93, s * 0.28);
-        grain(x, 26);
+        x.fillStyle = "#e94560";
+        x.font = `700 ${s*0.085}px Inter, sans-serif`;
+        x.fillText("CHẠY", s*0.9, s*0.52);
+        x.fillText("NGAY ĐI", s*0.9, s*0.63);
+        x.font = `500 ${s*0.032}px Inter, sans-serif`;
+        x.fillStyle = "#6b3040";
+        x.fillText("SƠN TÙNG M-TP", s*0.9, s*0.7);
+        grain(x, 22);
       }
 
-      /* cover factory */
+      /* — Muộn Rồi Mà Sao Còn: warm amber late-night golden hour — */
+      function coverMuonRoiMaSaoCon(x, s) {
+        const g = x.createLinearGradient(0, 0, 0, s);
+        g.addColorStop(0, "#e67e22");
+        g.addColorStop(0.35, "#d35400");
+        g.addColorStop(0.65, "#873600");
+        g.addColorStop(1, "#1a0800");
+        x.fillStyle = g;
+        x.fillRect(0, 0, s, s);
+        // setting sun circle
+        const sun = x.createRadialGradient(s/2, s*0.62, 0, s/2, s*0.62, s*0.3);
+        sun.addColorStop(0, "rgba(255,200,100,0.9)");
+        sun.addColorStop(0.3, "rgba(255,160,40,0.6)");
+        sun.addColorStop(0.7, "rgba(200,80,20,0.2)");
+        sun.addColorStop(1, "rgba(0,0,0,0)");
+        x.fillStyle = sun;
+        x.fillRect(0, 0, s, s);
+        // horizon line with silhouette trees
+        x.fillStyle = "#1a0800";
+        x.fillRect(0, s*0.68, s, s*0.32);
+        x.beginPath();
+        for (let i = 0; i < 20; i++) {
+          const tx = i/19 * s, th = s*0.06 + Math.sin(i*1.7)*s*0.08 + Math.sin(i*3.1)*s*0.04;
+          x.lineTo(tx, s*0.68 - th);
+        }
+        x.lineTo(s, s);
+        x.lineTo(0, s);
+        x.closePath();
+        x.fill();
+        // warm glow overlay
+        const ov = x.createRadialGradient(s/2, s*0.45, 0, s/2, s*0.55, s*0.5);
+        ov.addColorStop(0, "rgba(255,180,60,0.2)");
+        ov.addColorStop(1, "rgba(0,0,0,0)");
+        x.fillStyle = ov;
+        x.fillRect(0, 0, s, s);
+        x.textAlign = "center";
+        x.fillStyle = "#fdebd0";
+        x.font = `600 ${s*0.055}px Inter, sans-serif`;
+        x.fillText("MUỘN RỒI MÀ", s/2, s*0.84);
+        x.fillText("SAO CÒN", s/2, s*0.915);
+        x.font = `500 ${s*0.032}px Inter, sans-serif`;
+        x.fillStyle = "#e8b48c";
+        x.fillText("SƠN TÙNG M-TP", s/2, s*0.965);
+        grain(x);
+      }
+
+      /* cover factory *//* cover factory */
       function makeCover(album, size = 640) {
         const c = cnv(size, size),
           x = c.getContext("2d");
@@ -2973,21 +3005,18 @@
    control, crackle and playback-speed all run through real nodes.
    ══════════════════════════════════════════════════════════════ */
       const Audio = (() => {
-        let ctx = null,
-          master,
-          lowShelf,
-          highShelf,
-          comp,
-          crackleGain,
-          musicGain;
-        let crackleSrc = null;
+        let ctx = null, audioEl = null, source = null;
+        let master, lowShelf, highShelf, comp;
+        let crackleGain, crackleSrc = null;
+        let startTime = 0, startOffset = 0, trackDur = 0;
         const S = { volume: 0.75, tone: 0.5, speedFactor: 1, playing: false };
+        const AudioEl = window.Audio; // keep ref to browser's Audio constructor
 
         function ensure() {
           if (ctx) return ctx;
           ctx = new (window.AudioContext || window.webkitAudioContext)();
           master = ctx.createGain();
-          master.gain.value = S.volume;
+          master.gain.value = S.volume * S.volume;
           lowShelf = ctx.createBiquadFilter();
           lowShelf.type = "lowshelf";
           lowShelf.frequency.value = 280;
@@ -2998,9 +3027,6 @@
           comp.threshold.value = -16;
           comp.ratio.value = 3;
           comp.knee.value = 18;
-          musicGain = ctx.createGain();
-          musicGain.gain.value = 0;
-          musicGain.connect(lowShelf);
           lowShelf.connect(highShelf);
           highShelf.connect(comp);
           comp.connect(master);
@@ -3008,13 +3034,12 @@
           // vinyl crackle bed
           crackleGain = ctx.createGain();
           crackleGain.gain.value = 0;
-          const len = ctx.sampleRate * 3,
-            buf = ctx.createBuffer(1, len, ctx.sampleRate);
+          const len = ctx.sampleRate * 3, buf = ctx.createBuffer(1, len, ctx.sampleRate);
           const d = buf.getChannelData(0);
           for (let i = 0; i < len; i++) {
-            d[i] = (Math.random() * 2 - 1) * 0.028; // hiss
-            if (Math.random() < 0.0007) d[i] += (Math.random() * 2 - 1) * 0.85; // pops
-            if (Math.random() < 0.004) d[i] += (Math.random() * 2 - 1) * 0.22; // ticks
+            d[i] = (Math.random() * 2 - 1) * 0.028;
+            if (Math.random() < 0.0007) d[i] += (Math.random() * 2 - 1) * 0.85;
+            if (Math.random() < 0.004) d[i] += (Math.random() * 2 - 1) * 0.22;
           }
           crackleSrc = ctx.createBufferSource();
           crackleSrc.buffer = buf;
@@ -3031,411 +3056,69 @@
           return ctx;
         }
         const now = () => (ctx ? ctx.currentTime : 0);
-
-        /* ——— tiny instrument kit ——— */
-        const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
-        function env(g, t, a, peak, dec, sus = 0) {
-          g.gain.setValueAtTime(0.0001, t);
-          g.gain.exponentialRampToValueAtTime(peak, t + a);
-          g.gain.exponentialRampToValueAtTime(
-            Math.max(sus, 0.0001),
-            t + a + dec,
-          );
-        }
-        function pluck(
-          midi,
-          t,
-          {
-            type = "triangle",
-            peak = 0.16,
-            dec = 0.9,
-            cutoff = 2200,
-            detune = 0,
-          } = {},
-        ) {
-          const o = ctx.createOscillator(),
-            g = ctx.createGain(),
-            f = ctx.createBiquadFilter();
-          o.type = type;
-          o.frequency.value = mtof(midi);
-          o.detune.value = detune;
-          f.type = "lowpass";
-          f.frequency.setValueAtTime(cutoff, t);
-          f.frequency.exponentialRampToValueAtTime(
-            Math.max(cutoff * 0.25, 120),
-            t + dec,
-          );
-          env(g, t, 0.006, peak, dec);
-          o.connect(f);
-          f.connect(g);
-          g.connect(musicGain);
-          o.start(t);
-          o.stop(t + dec + 0.3);
-        }
-        function keys(midi, t, { peak = 0.11, dec = 1.6 } = {}) {
-          // e-piano: sine + soft overtone + tremolo
-          const g = ctx.createGain();
-          env(g, t, 0.008, peak, dec);
-          const tr = ctx.createGain();
-          tr.gain.value = 1;
-          const lfo = ctx.createOscillator();
-          lfo.frequency.value = 4.3;
-          const lg = ctx.createGain();
-          lg.gain.value = 0.14;
-          lfo.connect(lg);
-          lg.connect(tr.gain);
-          lfo.start(t);
-          lfo.stop(t + dec + 0.4);
-          [
-            [1, "sine", 1],
-            [2, "sine", 0.32],
-            [3.98, "sine", 0.07],
-          ].forEach(([mul, type, amt]) => {
-            const o = ctx.createOscillator();
-            o.type = type;
-            o.frequency.value = mtof(midi) * mul;
-            const og = ctx.createGain();
-            og.gain.value = amt;
-            o.connect(og);
-            og.connect(tr);
-            o.start(t);
-            o.stop(t + dec + 0.4);
-          });
-          tr.connect(g);
-          g.connect(musicGain);
-        }
-        function bass(
-          midi,
-          t,
-          { peak = 0.2, dec = 0.55, type = "triangle" } = {},
-        ) {
-          const o = ctx.createOscillator(),
-            g = ctx.createGain(),
-            f = ctx.createBiquadFilter();
-          o.type = type;
-          o.frequency.value = mtof(midi);
-          f.type = "lowpass";
-          f.frequency.value = 520;
-          env(g, t, 0.01, peak, dec, 0.001);
-          o.connect(f);
-          f.connect(g);
-          g.connect(musicGain);
-          o.start(t);
-          o.stop(t + dec + 0.25);
-        }
-        function pad(
-          midis,
-          t,
-          { peak = 0.05, att = 1.4, hold = 2.6, rel = 1.6, cutoff = 1200 } = {},
-        ) {
-          midis.forEach((mi) => {
-            [-6, 5].forEach((det) => {
-              const o = ctx.createOscillator(),
-                g = ctx.createGain(),
-                f = ctx.createBiquadFilter();
-              o.type = "sawtooth";
-              o.frequency.value = mtof(mi);
-              o.detune.value = det;
-              f.type = "lowpass";
-              f.frequency.value = cutoff;
-              f.Q.value = 0.4;
-              g.gain.setValueAtTime(0.0001, t);
-              g.gain.linearRampToValueAtTime(peak, t + att);
-              g.gain.setValueAtTime(peak, t + att + hold);
-              g.gain.linearRampToValueAtTime(0.0001, t + att + hold + rel);
-              o.connect(f);
-              f.connect(g);
-              g.connect(musicGain);
-              o.start(t);
-              o.stop(t + att + hold + rel + 0.1);
-            });
-          });
-        }
-        function noiseHit(
-          t,
-          { peak = 0.05, dec = 0.09, freq = 6800, q = 1.2 } = {},
-        ) {
-          // ride / hat / snare colouring
-          const len = ctx.sampleRate * 0.25,
-            b = ctx.createBuffer(1, len, ctx.sampleRate);
-          const d = b.getChannelData(0);
-          for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-          const s = ctx.createBufferSource();
-          s.buffer = b;
-          const f = ctx.createBiquadFilter();
-          f.type = "bandpass";
-          f.frequency.value = freq;
-          f.Q.value = q;
-          const g = ctx.createGain();
-          env(g, t, 0.002, peak, dec);
-          s.connect(f);
-          f.connect(g);
-          g.connect(musicGain);
-          s.start(t);
-          s.stop(t + dec + 0.15);
-        }
-        function kick(t, { peak = 0.22 } = {}) {
-          const o = ctx.createOscillator(),
-            g = ctx.createGain();
-          o.type = "sine";
-          o.frequency.setValueAtTime(120, t);
-          o.frequency.exponentialRampToValueAtTime(38, t + 0.11);
-          env(g, t, 0.003, peak, 0.24);
-          o.connect(g);
-          g.connect(musicGain);
-          o.start(t);
-          o.stop(t + 0.4);
-        }
-        function horn(midi, t, { peak = 0.07, dec = 1.1 } = {}) {
-          // muted-trumpet-ish lead
-          const o = ctx.createOscillator(),
-            g = ctx.createGain(),
-            f = ctx.createBiquadFilter();
-          o.type = "sawtooth";
-          o.frequency.value = mtof(midi);
-          const vib = ctx.createOscillator();
-          vib.frequency.value = 5.2;
-          const vg = ctx.createGain();
-          vg.gain.value = 4;
-          vib.connect(vg);
-          vg.connect(o.frequency);
-          vib.start(t);
-          vib.stop(t + dec + 0.3);
-          f.type = "bandpass";
-          f.frequency.value = 920;
-          f.Q.value = 1.6;
-          env(g, t, 0.06, peak, dec);
-          o.connect(f);
-          f.connect(g);
-          g.connect(musicGain);
-          o.start(t);
-          o.stop(t + dec + 0.3);
+        function applyTone(v) {
+          if (!ctx) return;
+          const t = (v - 0.5) * 2;
+          lowShelf.gain.setTargetAtTime(-t * 7, now(), 0.05);
+          highShelf.gain.setTargetAtTime(t * 8, now(), 0.05);
         }
 
-        /* ——— generative composer, one grammar per record ——— */
-        // chord degrees on a root: [semitone offsets]
-        const CH = {
-          m7: [0, 3, 7, 10],
-          M7: [0, 4, 7, 11],
-          d7: [0, 4, 7, 10],
-          m9: [0, 3, 7, 10, 14],
-          M9: [0, 4, 7, 11, 14],
-          sus: [0, 5, 7, 10],
-          m6: [0, 3, 7, 9],
-        };
-        const PROGS = {
-          jazz: [
-            ["m9", 0],
-            ["m9", 0],
-            ["m7", 5],
-            ["d7", 10],
-            ["m9", 0],
-            ["m6", -4],
-            ["m7", 5],
-            ["d7", 7],
-          ],
-          ambient: [
-            ["M9", 0],
-            ["m9", 9],
-            ["M7", 5],
-            ["sus", 7],
-          ],
-          piano: [
-            ["M7", 0],
-            ["m7", 9],
-            ["M7", 5],
-            ["sus", 7],
-            ["M7", 0],
-            ["m7", 4],
-            ["m7", 9],
-            ["sus", 7],
-          ],
-          synth: [
-            ["m9", 0],
-            ["m9", 0],
-            ["M7", 8],
-            ["sus", 10],
-          ],
-          folk: [
-            ["M7", 0],
-            ["M7", 5],
-            ["m7", 9],
-            ["sus", 7],
-          ],
-          lofi: [
-            ["m9", 0],
-            ["M9", 3],
-            ["m9", 8],
-            ["d7", 10],
-          ],
-        };
-        const seq = { album: null, step: 0, nextT: 0, timer: null };
-        const SPB = () => 60 / (seq.album.bpm * S.speedFactor) / 4; // seconds per 16th
-
-        function chordAt(bar) {
-          const prog = PROGS[seq.album.style];
-          const [kind, off] = prog[bar % prog.length];
-          return CH[kind].map((s) => seq.album.root + off + s);
-        }
-        function scheduleStep(step, t) {
-          const a = seq.album,
-            bar = (step / 16) | 0,
-            s16 = step % 16,
-            ch = chordAt(bar);
-          const R = Math.random;
-          switch (a.style) {
-            case "jazz": {
-              const swing = s16 % 4 === 2 ? SPB() * 0.32 : 0;
-              if (s16 % 4 === 0)
-                noiseHit(t, { peak: 0.045, freq: 7200, dec: 0.16 }); // ride
-              if (s16 % 4 === 2)
-                noiseHit(t + swing, { peak: 0.028, freq: 8600, dec: 0.07 }); // swung skip
-              if (s16 % 4 === 0) {
-                // walking bass
-                const opts = [
-                  ch[0] - 12,
-                  ch[1] - 12,
-                  ch[2] - 12,
-                  ch[0] - 10,
-                  ch[3] - 12,
-                ];
-                bass(opts[(R() * opts.length) | 0], t, {
-                  peak: 0.17,
-                  dec: 0.5,
-                });
-              }
-              if (s16 === 0 && bar % 2 === 0)
-                ch.slice(1).forEach((m, i) =>
-                  keys(m, t + i * 0.012, { peak: 0.05, dec: 1.9 }),
-                );
-              if (s16 === 8 && R() < 0.65) {
-                // horn phrase
-                const lick = [ch[3] + 12, ch[2] + 12, ch[1] + 12, ch[3] + 10];
-                lick
-                  .slice(0, 2 + ((R() * 3) | 0))
-                  .forEach((m, i) =>
-                    horn(m, t + i * SPB() * 2, { peak: 0.055, dec: 0.7 }),
-                  );
-              }
-              break;
-            }
-            case "ambient": {
-              if (s16 === 0)
-                pad(
-                  ch.map((m) => m - 0),
-                  t,
-                  { peak: 0.055, att: 2.2, hold: 3.4, rel: 2.4, cutoff: 900 },
-                );
-              if (s16 === 0)
-                bass(ch[0] - 24, t, { peak: 0.1, dec: 3.2, type: "sine" });
-              if (s16 % 8 === 4 && R() < 0.55)
-                keys(ch[(R() * ch.length) | 0] + 24, t, {
-                  peak: 0.035,
-                  dec: 3,
-                });
-              break;
-            }
-            case "piano": {
-              const arp = [0, 2, 1, 3, 2, 4 % ch.length, 1, 2];
-              if (s16 % 2 === 0)
-                pluck(ch[arp[(s16 / 2) % 8]], t, {
-                  type: "sine",
-                  peak: 0.1,
-                  dec: 1.5,
-                  cutoff: 3000,
-                });
-              if (s16 === 0)
-                bass(ch[0] - 12, t, { peak: 0.09, dec: 1.8, type: "sine" });
-              if (s16 === 0 && bar % 2 === 1)
-                keys(ch[3] + 12, t, { peak: 0.05, dec: 2.4 });
-              break;
-            }
-            case "synth": {
-              if (s16 % 2 === 0)
-                bass(ch[0] - 12 + (s16 % 8 === 6 ? 7 : 0), t, {
-                  peak: 0.16,
-                  dec: 0.22,
-                  type: "square",
-                });
-              if (s16 % 4 === 2)
-                noiseHit(t, { peak: 0.03, freq: 9000, dec: 0.05 });
-              if (s16 % 8 === 4)
-                noiseHit(t, { peak: 0.05, freq: 2400, q: 0.8, dec: 0.14 });
-              if (s16 === 0)
-                pad(ch, t, {
-                  peak: 0.04,
-                  att: 0.8,
-                  hold: 2.4,
-                  rel: 1.4,
-                  cutoff: 1500,
-                });
-              if (s16 === 0 && bar % 4 === 0) kick(t, { peak: 0.16 });
-              break;
-            }
-            case "folk": {
-              const strum = [0, 1, 2, 3, 2, 1];
-              if (s16 % 2 === 0)
-                pluck(ch[strum[(s16 / 2) % 6]], t + R() * 0.012, {
-                  type: "triangle",
-                  peak: 0.11,
-                  dec: 1.1,
-                  cutoff: 2600,
-                });
-              if (s16 === 0) bass(ch[0] - 12, t, { peak: 0.12, dec: 0.9 });
-              if (s16 === 8) bass(ch[2] - 12, t, { peak: 0.09, dec: 0.8 });
-              break;
-            }
-            case "lofi": {
-              if (s16 === 0 || s16 === 10) kick(t, { peak: 0.2 });
-              if (s16 === 4 || s16 === 12)
-                noiseHit(t, { peak: 0.07, freq: 1900, q: 0.9, dec: 0.13 });
-              if (s16 % 2 === 0)
-                noiseHit(t + (s16 % 4 === 2 ? SPB() * 0.4 : 0), {
-                  peak: 0.018,
-                  freq: 8200,
-                  dec: 0.04,
-                });
-              if (s16 === 0)
-                ch.forEach((m, i) =>
-                  keys(m, t + i * 0.02, { peak: 0.055, dec: 2.2 }),
-                );
-              if (s16 === 14 && R() < 0.4)
-                keys(ch[3] + 12, t, { peak: 0.04, dec: 1.4 });
-              break;
-            }
-          }
-        }
-        function pump() {
-          if (!S.playing || !seq.album) return;
-          const horizon = now() + 0.14;
-          while (seq.nextT < horizon) {
-            scheduleStep(seq.step, seq.nextT);
-            seq.nextT += SPB();
-            seq.step++;
-          }
-        }
         return {
           ensure,
           play(album) {
             ensure();
             if (ctx.state === "suspended") ctx.resume();
-            seq.album = album;
-            seq.step = 0;
-            seq.nextT = now() + 0.06;
-            S.playing = true;
-            clearInterval(seq.timer);
-            seq.timer = setInterval(pump, 30);
-            musicGain.gain.cancelScheduledValues(now());
-            musicGain.gain.setTargetAtTime(1, now(), 0.5);
-            crackleGain.gain.setTargetAtTime(0.55, now(), 0.4);
+            // clean up previous
+            if (source) { try { source.disconnect(); } catch(e){} source = null; }
+            if (audioEl) { audioEl.pause(); audioEl = null; }
+            // create audio element and connect through Web Audio
+            audioEl = new AudioEl("/" + album.audio);
+            console.log("🎵 Loading:", "/" + album.audio);
+            audioEl.oncanplaythrough = () => console.log("✅ Audio loaded OK");
+            audioEl.onerror = (e) => console.error("❌ Audio load error:", e);
+            audioEl.loop = false;
+            audioEl.playbackRate = S.speedFactor;
+            audioEl.currentTime = 0;
+            trackDur = album.dur;
+            source = ctx.createMediaElementSource(audioEl);
+            source.connect(lowShelf);
+            // Ensure volume is correct
+            master.gain.setTargetAtTime(S.volume * S.volume, now(), 0.02);
+            audioEl.addEventListener("ended", () => {
+              S.playing = false;
+              crackleGain.gain.setTargetAtTime(0, now(), 0.5);
+              const next = (T.albumIdx + 1) % ALBUMS.length;
+              T.albumIdx = next;
+              T.time = 0;
+              const a = album();
+              updateNowPlaying(a);
+              markActiveCard(a.id);
+              labelMat.map = ctex(makeLabel(a));
+              labelMat.needsUpdate = true;
+              Audio.play(a);
+            }, { once: true });
+            audioEl.play()
+              .then(() => {
+                S.playing = true;
+                startTime = ctx.currentTime;
+                startOffset = 0;
+                crackleGain.gain.setTargetAtTime(0.55, now(), 0.4);
+              })
+              .catch((e) => {
+                console.error("❌ Audio play failed:", album.audio, e.message);
+                S.playing = false;
+              });
           },
           stop(fast = false) {
             S.playing = false;
-            clearInterval(seq.timer);
-            if (!ctx) return;
-            const k = fast ? 0.12 : 0.5;
-            musicGain.gain.setTargetAtTime(0, now(), k);
-            crackleGain.gain.setTargetAtTime(0, now(), k * 1.4);
+            if (audioEl) {
+              audioEl.pause();
+              if (fast) {
+                if (source) { try { source.disconnect(); } catch(e){} source = null; }
+                audioEl = null;
+              }
+            }
+            if (crackleGain) crackleGain.gain.setTargetAtTime(0, now(), fast ? 0.12 : 0.5);
           },
           setVolume(v) {
             S.volume = v;
@@ -3443,30 +3126,35 @@
           },
           setTone(v) {
             S.tone = v;
-            if (ctx) applyTone(v);
+            applyTone(v);
           },
           setSpeed(f) {
             S.speedFactor = f;
+            if (audioEl) audioEl.playbackRate = f;
           },
           seekRestart() {
-            if (S.playing && seq.album) {
-              seq.step = 0;
-              seq.nextT = now() + 0.05;
+            if (S.playing && audioEl) {
+              audioEl.currentTime = 0;
+              startTime = ctx.currentTime;
+              startOffset = 0;
             }
           },
-          get playing() {
-            return S.playing;
+          seekTo(t) {
+            if (audioEl) {
+              audioEl.currentTime = t;
+              startTime = ctx.currentTime;
+              startOffset = t;
+            }
           },
+          getTime() {
+            if (!audioEl || !ctx) return 0;
+            return audioEl.currentTime;
+          },
+          getAudioEl() { return audioEl; },
+          get playing() { return S.playing; },
           state: S,
         };
-        function applyTone(v) {
-          const t = (v - 0.5) * 2; // −1 … +1
-          lowShelf.gain.setTargetAtTime(-t * 7, now(), 0.05);
-          highShelf.gain.setTargetAtTime(t * 8, now(), 0.05);
-        }
-      })();
-
-      /* ══════════════════════════════════════════════════════════════
+      })();      /* ══════════════════════════════════════════════════════════════
    6 · TRANSPORT — motor physics, tonearm choreography, track clock
    ══════════════════════════════════════════════════════════════ */
       const T = {
@@ -3501,14 +3189,13 @@
           T.state === "swapping"
         )
           return;
-        Audio.ensure();
+        Audio.play(album()); // play now (muted) during user click
         T.state = "cueing";
         T.motorOn = true;
         armTL.kill();
         const tl = gsap.timeline({
           onComplete() {
             T.state = "playing";
-            Audio.play(album());
           },
         });
         armTL.tl = tl;
@@ -3909,8 +3596,8 @@
       function seekTo(clientX) {
         const r = seekEl.getBoundingClientRect();
         const p = THREE.MathUtils.clamp((clientX - r.left) / r.width, 0, 1);
+        Audio.seekTo(p * album().dur);
         T.time = p * album().dur;
-        Audio.seekRestart();
         document.getElementById("seekFill").style.width = p * 100 + "%";
         document.getElementById("seekDot").style.left = p * 100 + "%";
       }
@@ -3985,21 +3672,17 @@
 
         /* track clock + stylus tracking */
         if (T.state === "playing") {
-          T.time += dt * (T.rpm / (100 / 3));
-          if (T.time >= album().dur) {
-            loadAlbum(T.albumIdx + 1, true);
-          } else {
-            armYaw.rotation.y = yawForProgress(T.time / album().dur);
-            // microscopic stylus oscillation while in the groove
-            armLift.rotation.x =
-              LIFT_DOWN +
-              Math.sin(elapsed * 41) * 0.0016 +
-              Math.sin(elapsed * 7.3) * 0.0011;
-            const p = T.time / album().dur;
-            document.getElementById("seekFill").style.width = p * 100 + "%";
-            document.getElementById("seekDot").style.left = p * 100 + "%";
-            seekEl.setAttribute("aria-valuenow", Math.round(p * 100));
-          }
+          T.time = Audio.getTime();
+          armYaw.rotation.y = yawForProgress(T.time / album().dur);
+          // microscopic stylus oscillation while in the groove
+          armLift.rotation.x =
+            LIFT_DOWN +
+            Math.sin(elapsed * 41) * 0.0016 +
+            Math.sin(elapsed * 7.3) * 0.0011;
+          const p = T.time / album().dur;
+          document.getElementById("seekFill").style.width = p * 100 + "%";
+          document.getElementById("seekDot").style.left = p * 100 + "%";
+          seekEl.setAttribute("aria-valuenow", Math.round(p * 100));
         }
         document.getElementById("timeCur").textContent = fmt(T.time);
         led.material.emissiveIntensity +=
@@ -4074,6 +3757,28 @@
         () => document.getElementById("loader").classList.add("done"),
         650,
       );
+
+      /* ═══════════════════════════════════════════════════════════
+   LIKE BUBBLE + MODAL
+   ═══════════════════════════════════════════════════════════ */
+      const likeBubble = document.getElementById("likeBubble");
+      const likeModal = document.getElementById("likeModal");
+      const modalClose = document.getElementById("modalClose");
+
+      likeBubble.addEventListener("click", () => {
+        likeModal.classList.add("open");
+      });
+      modalClose.addEventListener("click", () => {
+        likeModal.classList.remove("open");
+      });
+      likeModal.addEventListener("click", (e) => {
+        if (e.target === likeModal) likeModal.classList.remove("open");
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && likeModal.classList.contains("open")) {
+          likeModal.classList.remove("open");
+        }
+      });
     </script>
   </body>
 </html>

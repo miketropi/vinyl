@@ -1,6 +1,10 @@
 import { defineConfig } from "vite";
 
 export default defineConfig({
+  optimizeDeps: {
+    // "three" is loaded via CDN importmap — don't pre-bundle it in dev
+    exclude: ["three"],
+  },
   build: {
     rollupOptions: {
       // "three" is loaded at runtime via the <script type="importmap"> in
